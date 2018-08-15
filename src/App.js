@@ -1,19 +1,58 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import 'bulma/css/bulma.css'
 import './App.css';
+import {Columns, Column, Button, Title, Subtitle, Field, Control, Input, Box} from 'bloomer';
 
 class App extends Component {
   render() {
-    return (
+    return(
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">READ X IN Y</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+        <Columns isCentered isMultiline  >
+          <Column className="mainHeading" isSize={12}>
+            <Title isSize={2}>Read X in Y</Title>
+          </Column>
+
+          <Column isSize={12}>
+              <Field isHorizontal hasAddons="centered">
+                <Control className="searchBooksInput">
+                  <Input isSize="medium"   type="text" placeholder="Start typing"/>
+                  <span className="underline"></span>
+                </Control>
+               </Field>
+          </Column>
+
+          <Column>
+            <Columns isCentered>
+              <Column>
+                <Box>
+                  <Subtitle isSize={3}>READING</Subtitle>
+                  <div className="divider"/>
+                  <div className="placeholder"/>
+                </Box>
+              </Column>
+
+              <Column isSize={5}>
+                <Box>
+                  <Subtitle  isSize={3}>FOUND</Subtitle>
+                  <div className="divider"/>
+                  <div className="placeholderFound"/>
+                </Box>
+                 <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
+              </Column>
+
+              <Column>
+                <Box>
+                  <Subtitle  isSize={3}>TO READ</Subtitle>
+                  <div className="divider"/>
+                  <div className="placeholder"/>
+                </Box>
+              </Column>
+
+            </Columns>
+          </Column>
+        </Columns>
+
+    </div>
     );
   }
 }
