@@ -3,6 +3,7 @@ import 'bulma/css/bulma.css'
 import './App.css';
 import {Columns, Column, Button, Title, Subtitle, Field, Control, Input, Box} from 'bloomer';
 
+
 class App extends Component {
   render() {
     return(
