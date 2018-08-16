@@ -51,16 +51,42 @@ input:focus::-webkit-input-placeholder {
 .divider{
   background-color: grey;
   width: 100%;
-  height: 0.5px;
+  height: 1px;
+  margin-bottom: 15px;
+}
+
+:root{
+  --placeholderHeight: 465px;
 }
 
 .placeholder{
-  height: 350px;
+  height: var(--placeholderHeight);
 }
 
-.placeholderFound{
-  height: 250px;
+
+
+.foundScrollableContainer{
+
+  overflow-y: auto;
 }
+
+
+.scrollBar::-webkit-scrollbar {
+  width: 0px;
+  height: 5px
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+  background: #BEBEBE;
+  border-radius: 10px;
+}
+
+.scrollBar::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+
 
 .customButton{
   width: 100%;
@@ -69,4 +95,8 @@ input:focus::-webkit-input-placeholder {
 
 .searchBooksInput{
   width: 350px;
+}
+
+.book{
+  height: 150px;
 }

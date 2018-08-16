@@ -2,10 +2,21 @@ import React, { Component } from 'react';
 import 'bulma/css/bulma.css'
 import './App.css';
 import {Columns, Column, Button, Title, Subtitle, Field, Control, Input, Box} from 'bloomer';
-
+import Book from './Components/book.js'
 
 class App extends Component {
+
+getAllBooks = (num) => {
+  let books = []
+  for (let i=1; i<num; i++){
+    books.push( <Book key ={i} title={"title " + i} subtitle={"subtitle " + i}/> )
+   }
+
+   return books
+}
+
   render() {
+
     return(
       <div className="App">
         <Columns isCentered isMultiline  >
@@ -33,10 +44,13 @@ class App extends Component {
               </Column>
 
               <Column isSize={5}>
-                <Box>
+                <Box className="foundBox">
                   <Subtitle  isSize={3}>FOUND</Subtitle>
                   <div className="divider"/>
-                  <div className="placeholderFound"/>
+
+                  <Columns isMobile className="foundScrollableContainer scrollBar">
+                  {this.getAllBooks(8)}
+                  </Columns>
                 </Box>
                  <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
               </Column>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-
 const Home = () => (
  <h1>Home</h1>
 );
