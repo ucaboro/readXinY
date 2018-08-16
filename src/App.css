@@ -65,14 +65,18 @@ input:focus::-webkit-input-placeholder {
 
 
 
-.foundScrollableContainer{
-
+.foundScrollableMobile{
   overflow-y: auto;
+}
+
+.foundScrollableDesktop{
+  height: 390px;
+  overflow-x: auto;
 }
 
 
 .scrollBar::-webkit-scrollbar {
-  width: 0px;
+  width: 5px;
   height: 5px
 }
 
