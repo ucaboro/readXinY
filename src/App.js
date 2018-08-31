@@ -1,108 +1,65 @@
 import React, { Component } from 'react';
 import 'bulma/css/bulma.css'
 import './App.css';
-import {Columns, Column, Button, Title, Subtitle, Field, Control, Input, Box} from 'bloomer';
-import Book from './Components/book.js'
+import login from './Containers/login.js';
+import welcome from './Containers/welcome.js';
+import searchBook from './Containers/searchBook.js';
+import main from './Containers/main.js'
+import {Column, Tabs, TabList, TabLink, Tab} from 'bloomer';
 
-import {
-  BrowserView,
-  MobileView,
-  isBrowser,
-  isMobile
-} from "react-device-detect";
+import {BrowserRouter,Route, Link} from 'react-router-dom';
+
 
 class App extends Component {
+constructor(){
+  super()
+  this.state={
+    isActive:'isActive'
+  }
+}
 
-getAllBooks = (num, size) => {
-  let books = []
-  for (let i=1; i<num; i++){
-    books.push( <Book key ={i} title={"title " + i} subtitle={"subtitle " + i} size={size}/> )
-   }
-
-   return books
+//setting isActive on tab click
+handleCheck(e) {
+  let new_class = ''
+  let tabsNum = document.getElementById('tabs').childNodes.length
+  for (let i=0; i<tabsNum;i++){
+      document.getElementById('tabs').childNodes[i].setAttribute( 'class', new_class );
+  }
+  e.target.parentElement.className = 'is-active'
 }
 
   render() {
     return(
-      <div className="App">
-        <Columns isCentered isMultiline  >
-          <Column className="mainHeading" isSize={12}>
-            <Title isSize={2}>Read X in Y</Title>
-          </Column>
-
-
+      <BrowserRouter>
+        <div>
           <Column isSize={12}>
-              <Field isHorizontal hasAddons="centered">
-                <Control className="searchBooksInput">
-                  <Input isSize="medium" type="text" placeholder="Start typing"/>
-                  <span className="underline"></span>
-                </Control>
-               </Field>
+
+          <Tabs isAlign='centered'>
+            <TabList id='tabs'>
+              <Tab onClick={this.handleCheck}>
+                <Link style={{textDecoration: 'none'}} to='/welcome'>Welcome</Link>
+              </Tab>
+              <Tab  onClick={this.handleCheck}>
+                <Link style={{textDecoration: 'none'}} to='/login'>Login</Link>
+              </Tab>
+              <Tab onClick={this.handleCheck}>
+                <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
+              </Tab>
+              <Tab onClick={this.handleCheck}>
+                <Link style={{textDecoration: 'none'}} to='/main'>Main</Link>
+              </Tab>
+            </TabList>
+          </Tabs>
+
           </Column>
-
-
-
-          <Column>
-            <Columns isCentered >
-            <ReadingContainer title="READING"/>
-            {isBrowser
-              ?  <FoundContainerDesktop books={this.getAllBooks(9, 3)}/>
-              : <FoundContainerMobile books={this.getAllBooks(9, 4)}/> }
-
-
-            <ReadingContainer title="TO READ"/>
-            </Columns>
-          </Column>
-        </Columns>
-
-    </div>
-    );
-  }
-}
-
-const ReadingContainer = ({title}) => {
-  if (isBrowser){
-    return (
-      <Column>
-        <Box>
-          <Subtitle isSize={3}>{title}</Subtitle>
-          <div className="divider"/>
-          <div className="placeholder"/>
-        </Box>
-      </Column>
+          <Route  exact path='/welcome' component={welcome} />
+          <Route  exact path='/login' component={login} />
+          <Route  exact path='/search' component={searchBook} />
+          <Route  exact path='/main' component={main} />
+        </div>
+      </BrowserRouter>
     )
-  }
-    return ("")
 }
-
-const FoundContainerDesktop = (props) => (
-  <Column isSize={5}>
-    <Box className="foundBox">
-      <Subtitle  isSize={3}>FOUND</Subtitle>
-      <div className="divider"/>
-      <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
-      {props.books}
-      </Columns>
-    </Box>
-     <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
-  </Column>
-)
-
-const FoundContainerMobile = (props) => (
-  <Column isSize={5}>
-    <Box className="foundBox">
-      <Subtitle  isSize={3}>FOUND</Subtitle>
-      <div className="divider"/>
-      <Columns isMobile className="foundScrollableMobile scrollBar">
-      {props.books}
-      </Columns>
-    </Box>
-     <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
-  </Column>
-)
-
-
-
-
+}
 
 export default App;
