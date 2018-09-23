@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import 'bulma/css/bulma.css'
 import '../App.css';
-import {Columns, Column, Button, Title, Subtitle, Field, Control, Input, Box} from 'bloomer';
+import {Columns, Column, Button,
+        Title, Subtitle, Field,
+        Control, Input, Box,
+        Modal, ModalBackground, ModalContent,
+        ModalClose, Media, MediaLeft, MediaRight,
+        MediaContent, Icon, Image, Content, Level,
+      Delete, LevelLeft, LevelItem} from 'bloomer';
 import Book from '../Components/book.js'
 import {
   BrowserView,
@@ -10,21 +16,111 @@ import {
   isMobile
 } from "react-device-detect";
 
+const ReadingBooks = [];
+
+const ToReadBooks = [];
 
 class searchBook extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      isActive: false,
+      activatedBook: '',
+      isLoadingReading: false,
+      isLoadingRead: false,
+    }
+    this.getBookInfo = this.getBookInfo.bind(this)
+    this.pushToReading = this.pushToReading.bind(this)
+    this.pushToRead = this.pushToRead.bind(this)
+
+  }
 
 getAllBooks = (num, size) => {
   let books = []
   for (let i=1; i<num; i++){
-    books.push( <Book key ={i} title={"title " + i} subtitle={"subtitle " + i} size={size}/> )
+    books.push( <Book key={i} id={i} title={"title " + i} subtitle={"subtitle " + i} size={size} onBookClick={this.getBookInfo}/> )
    }
 
    return books
 }
 
+pushToReading = () =>{
+this.setState({
+  isLoadingReading: true
+})
+  if(this.state.activatedBook!=null){
+    let num = this.state.activatedBook
+    var b =  document.getElementById(this.state.activatedBook)
+    let pic = b.children[0].children[0]
+    let title = b.childNodes[1].textContent
+    let subtitle = b.children[2].textContent
+
+    ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} onBookClick={this.getBookInfo}/>)
+
+    setTimeout(
+    function() {
+        this.setState({isLoadingReading: false,
+        isActive: !this.state.isActive});
+    }
+    .bind(this),
+    500
+);
+
+  }
+}
+
+pushToRead = () =>{
+this.setState({
+  isLoadingRead: true
+})
+  if(this.state.activatedBook!=null){
+    let num = this.state.activatedBook
+    var b =  document.getElementById(this.state.activatedBook)
+    let pic = b.children[0].children[0]
+    let title = b.childNodes[1].textContent
+    let subtitle = b.children[2].textContent
+
+    ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} onBookClick={this.getBookInfo}/>)
+
+    setTimeout(
+    function() {
+        this.setState({isLoadingRead: false,
+        isActive: !this.state.isActive});
+    }
+    .bind(this),
+    500
+);
+  }
+}
+
+
+getBookInfo = (e) =>{
+  if(this.state.isActive!=true){
+
+    this.setState({
+      activatedBook: e.target.parentNode.getAttribute('id')
+    })
+  }
+this.setState ({
+    isActive: !this.state.isActive
+})
+
+
+
+}
+
+
   render() {
     return(
       <div className="App">
+      <BookPopup
+        isActive={this.state.isActive!=false?'is-active':''}
+        closeModal={this.getBookInfo}
+        activatedBook={this.state.activatedBook}
+        readingClick={this.pushToReading}
+        toReadClick={this.pushToRead}
+        isLoadingRead={this.state.isLoadingRead!=false?'is-loading':''}
+        isLoadingReading={this.state.isLoadingReading!=false?'is-loading':''}/>
         <Columns isCentered isMultiline  >
           <Column className="mainHeading" isSize={12}>
             <Title isSize={2}>Read X in Y</Title>
@@ -46,11 +142,11 @@ getAllBooks = (num, size) => {
             <Columns isCentered >
             <ReadingContainer title="READING"/>
             {isBrowser
-              ?  <FoundContainerDesktop books={this.getAllBooks(9, 3)}/>
+              ?  <FoundContainerDesktop books={this.getAllBooks(9, 2)}/>
               : <FoundContainerMobile books={this.getAllBooks(9, 4)}/> }
 
 
-            <ReadingContainer title="TO READ"/>
+            <ToReadContainer title="TO READ"/>
             </Columns>
           </Column>
         </Columns>
@@ -60,6 +156,8 @@ getAllBooks = (num, size) => {
   }
 }
 
+
+
 const ReadingContainer = ({title}) => {
   if (isBrowser){
     return (
@@ -67,7 +165,26 @@ const ReadingContainer = ({title}) => {
         <Box>
           <Subtitle isSize={3}>{title}</Subtitle>
           <div className="divider"/>
-          <div className="placeholder"/>
+          <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
+          {ReadingBooks}
+          </Columns>
+        </Box>
+      </Column>
+    )
+  }
+    return ("")
+}
+
+const ToReadContainer = ({title}) => {
+  if (isBrowser){
+    return (
+      <Column>
+        <Box>
+          <Subtitle isSize={3}>{title}</Subtitle>
+          <div className="divider"/>
+            <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
+            {ToReadBooks}
+            </Columns>
         </Box>
       </Column>
     )
@@ -102,7 +219,55 @@ const FoundContainerMobile = (props) => (
 )
 
 
+const MediaPlaceholder = (props) =>(
+  <Media>
+  <MediaLeft>
+      <Image isSize='64x64' src='https://via.placeholder.com/128x128' />
+  </MediaLeft>
+  <MediaContent>
+      <Content>
+          <p>
+              <strong>John Wick</strong> <small>@JohnWick</small> <small>'31m'</small>
+              <br />
+              People Keep Asking If I’m Back, And I Haven’t Really Had An Answer, But Now, Yeah, I’m Thinking I’m Back.
+          </p>
+      </Content>
+  </MediaContent>
+</Media>
+)
 
+const BookPopup = (props) =>(
+  <Modal className = {props.isActive}>
+    <ModalBackground onClick={props.closeModal}/>
+    <ModalContent>
+    <Box>
+    <Columns isCentered isMultiline>
+    <Column isSize={12}>
+    Book information id:{props.activatedBook}
+    </Column>
+
+    <Column>
+    <MediaPlaceholder/>
+    </Column>
+
+    <Column isSize={12}>
+    <Columns>
+    <Column isSize={5}>
+    <Button isLoading={props.isLoadingReading} isColor='info' isSize='medium' onClick={props.readingClick}><p>Add to   <b> READING NOW</b></p></Button>
+    </Column>
+    <Column/>
+    <Column isSize={5}>
+    <Button isLoading={props.isLoadingRead} isColor='warning' isSize='medium' onClick={props.toReadClick}><p>Add to   <b> READ LATER</b></p></Button>
+    </Column>
+    </Columns>
+    </Column>
+
+    </Columns>
+    </Box>
+    </ModalContent>
+    <ModalClose onClick={props.closeModal} />
+</Modal>
+)
 
 
 export default searchBook;

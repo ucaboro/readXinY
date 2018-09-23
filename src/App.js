@@ -5,6 +5,7 @@ import login from './Containers/login.js';
 import welcome from './Containers/welcome.js';
 import searchBook from './Containers/searchBook.js';
 import main from './Containers/main.js'
+import dnd from './Containers/dndtest.js'
 import {Column, Tabs, TabList, TabLink, Tab} from 'bloomer';
 
 import {BrowserRouter,Route, Link} from 'react-router-dom';
@@ -48,6 +49,9 @@ handleCheck(e) {
               <Tab onClick={this.handleCheck}>
                 <Link style={{textDecoration: 'none'}} to='/main'>Main</Link>
               </Tab>
+              <Tab onClick={this.handleCheck}>
+                <Link style={{textDecoration: 'none'}} to='/dnd'>Drag and Drop</Link>
+              </Tab>
             </TabList>
           </Tabs>
 
@@ -56,6 +60,7 @@ handleCheck(e) {
           <Route  exact path='/login' component={login} />
           <Route  exact path='/search' component={searchBook} />
           <Route  exact path='/main' component={main} />
+          <Route  exact path='/dnd' component={dnd} />
         </div>
       </BrowserRouter>
     )

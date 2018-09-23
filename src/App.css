@@ -7,6 +7,14 @@ body, html {
   background-color:  #F5F5F5;
 }
 
+.book{
+  cursor: pointer;
+}
+
+.bookInfoBtn{
+  padding-right: 30px;
+}
+
 .mainHeading {
   padding: 5%;
 }
