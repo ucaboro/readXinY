@@ -7,6 +7,20 @@ body, html {
   background-color:  #F5F5F5;
 }
 
+.center {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.XandYinput{
+color: #363636;
+font-size: 2rem;
+font-weight: 600;
+line-height: 1.125;
+width: 50px;
+}
+
 .book{
   cursor: pointer;
 }
