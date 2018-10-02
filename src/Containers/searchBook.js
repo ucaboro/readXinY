@@ -16,9 +16,13 @@ import {
   isMobile
 } from "react-device-detect";
 
+import request from 'superagent';
+
 const ReadingBooks = [];
 
 const ToReadBooks = [];
+
+let books = [];
 
 class searchBook extends Component {
   constructor(props){
@@ -28,17 +32,25 @@ class searchBook extends Component {
       activatedBook: '',
       isLoadingReading: false,
       isLoadingRead: false,
+      searchQuery: '',
+      searchQueryLoading: false,
     }
     this.getBookInfo = this.getBookInfo.bind(this)
     this.pushToReading = this.pushToReading.bind(this)
     this.pushToRead = this.pushToRead.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.findBooks = this.findBooks.bind(this)
 
   }
 
-getAllBooks = (num, size) => {
-  let books = []
+handleChange(event) {
+  this.setState({searchQuery: event.target.value});
+}
+
+getAllBooks = (num, title, subtitle, cover, size) => {
+
   for (let i=1; i<num; i++){
-    books.push( <Book key={i} id={i} title={"title " + i} subtitle={"subtitle " + i} size={size} onBookClick={this.getBookInfo}/> )
+    books.push( <Book key={i} id={i} title={title} subtitle={subtitle} size={size} onBookClick={this.getBookInfo}/> )
    }
 
    return books
@@ -110,7 +122,77 @@ this.setState ({
 }
 
 
+
+findBooks = () => {
+  books = [];
+  let query = this.state.searchQuery
+  let numberOfBooks = 10
+  if(query.length!=0 && query!=undefined){
+    this.setState({searchQueryLoading: true})
+  request
+   .get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=${numberOfBooks}`)
+   .then(res => {
+     console.log(res.body.items)
+     console.log(res.body.items[0].volumeInfo.industryIdentifiers[0].identifier)//main
+     console.log(res.body.items[0].volumeInfo.authors[0])//Authors
+     console.log(res.body.items[0].volumeInfo.categories[0])//Main Category
+     console.log(res.body.items[0].volumeInfo.imageLinks.smallThumbnail)//cover
+     console.log(res.body.items[0].volumeInfo.infoLink)//link to google books
+     console.log(res.body.items[0].volumeInfo.previewLink)//preview link to google books
+     console.log(res.body.items[0].volumeInfo.publishedDate)
+     console.log(res.body.items[0].volumeInfo.title)
+     //console.log(res.body.items[0].volumeInfo.subtitle)
+      // res.body, res.headers, res.status
+      for (let i=0; i<numberOfBooks; i++){
+
+      //ensuring fileds exist
+      let identifier = ''
+      if(res.body.items[i].volumeInfo.industryIdentifiers!==undefined){
+      let idLength =  res.body.items[i].volumeInfo.industryIdentifiers.length
+         identifier = res.body.items[i].volumeInfo.industryIdentifiers[0].identifier
+      }
+
+      let author =''
+      if(res.body.items[i].volumeInfo.authors!==undefined){
+       author = res.body.items[i].volumeInfo.authors[0]
+
+      }else{
+        author = 'no author'
+      }
+
+      let title = res.body.items[i].volumeInfo.title
+      let cover = ''
+      if(res.body.items[i].volumeInfo.imageLinks!==undefined){
+       cover = res.body.items[i].volumeInfo.imageLinks.smallThumbnail
+      }else{
+        cover = 'http://d28hgpri8am2if.cloudfront.net/book_images/no_book_cover_hr.jpg'
+      }
+
+
+      let size = ''
+      isBrowser ? size = 2 : size = 6
+
+        books.push(<Book
+           isSize={size}
+           key={identifier}
+           id={i}
+           title={title}
+           subtitle={author}
+           size={3}
+           cover={cover}
+           onBookClick={this.getBookInfo}/>)}
+
+      this.setState({searchQueryLoading: false})
+   })
+   .catch(err => {
+      console.log(err)// err.message, err.response
+   });
+}
+}
+
+
   render() {
+
     return(
       <div className="App">
       <BookPopup
@@ -130,9 +212,10 @@ this.setState ({
           <Column isSize={12}>
               <Field isHorizontal hasAddons="centered">
                 <Control className="searchBooksInput">
-                  <Input isSize="medium" type="text" placeholder="Start typing"/>
+                  <Input onChange={this.handleChange} isSize="medium" type="text" placeholder="Start typing"/>
                   <span className="underline"></span>
                 </Control>
+                <Button onClick={this.findBooks} isLoading={this.state.searchQueryLoading!=false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
                </Field>
           </Column>
 
@@ -140,13 +223,13 @@ this.setState ({
 
           <Column>
             <Columns isCentered >
-            <ReadingContainer title="READING"/>
+            {/*<ReadingContainer title="READING"/>*/}
             {isBrowser
-              ?  <FoundContainerDesktop books={this.getAllBooks(9, 2)}/>
-              : <FoundContainerMobile books={this.getAllBooks(9, 4)}/> }
+              ?  <FoundContainerDesktop books={books}/>
+            : <FoundContainerMobile books={books}/> }
 
 
-            <ToReadContainer title="TO READ"/>
+            {/*<ToReadContainer title="TO READ"/>*/}
             </Columns>
           </Column>
         </Columns>
@@ -163,8 +246,8 @@ const ReadingContainer = ({title}) => {
     return (
       <Column>
         <Box>
-          <Subtitle isSize={3}>{title}</Subtitle>
-          <div className="divider"/>
+          <Subtitle isSize={4}>{title}</Subtitle>
+          {/*<div className="divider"/>*/}
           <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
           {ReadingBooks}
           </Columns>
@@ -180,8 +263,8 @@ const ToReadContainer = ({title}) => {
     return (
       <Column>
         <Box>
-          <Subtitle isSize={3}>{title}</Subtitle>
-          <div className="divider"/>
+          <Subtitle isSize={4}>{title}</Subtitle>
+          {/*<div className="divider"/>*/}
             <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
             {ToReadBooks}
             </Columns>
@@ -193,9 +276,9 @@ const ToReadContainer = ({title}) => {
 }
 
 const FoundContainerDesktop = (props) => (
-  <Column isSize={5}>
+  <Column isSize={12}>
     <Box className="foundBox">
-      <Subtitle  isSize={3}>FOUND</Subtitle>
+      <Subtitle isSize={3}>FOUND</Subtitle>
       <div className="divider"/>
       <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
       {props.books}
@@ -206,7 +289,7 @@ const FoundContainerDesktop = (props) => (
 )
 
 const FoundContainerMobile = (props) => (
-  <Column isSize={5}>
+  <Column isSize={12}>
     <Box className="foundBox">
       <Subtitle  isSize={3}>FOUND</Subtitle>
       <div className="divider"/>

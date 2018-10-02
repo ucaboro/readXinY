@@ -95,7 +95,7 @@ input:focus::-webkit-input-placeholder {
 }
 
 .foundScrollableDesktop{
-  height: 390px;
+  height: 800px;
   overflow-x: auto;
 }
 
@@ -124,8 +124,4 @@ input:focus::-webkit-input-placeholder {
 
 .searchBooksInput{
   width: 350px;
-}
-
-.book{
-  height: 150px;
 }

@@ -16,6 +16,8 @@ import {
         isMobile
       } from "react-device-detect";
 
+
+
 const ReadingBooks = [];
 
 const ToReadBooks = [];
@@ -35,7 +37,10 @@ const ToReadBooks = [];
 
         }
 
+
+
 render(){
+
   return(
     <div className="App">
       <Columns isCentered isMultiline  >
