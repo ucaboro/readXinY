@@ -458,8 +458,20 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick}) =
     </Column>
 
     <Column isSize={12}>
+      <Columns>
+        <Column isSize={4}>
+          <Button isLoading={isLoadingReading} isColor='success' isSize='medium' onClick={readingClick}><b> FINISH BOOK</b></Button>
+        </Column>
 
-    <Button isLoading={isLoadingReading} isColor='info' isSize='medium' onClick={readingClick}><b> SAVE</b></Button>
+        <Column isSize={4}>
+          <Button isLoading={isLoadingReading} isColor='info' isSize='medium' onClick={readingClick}><b> SAVE</b></Button>
+        </Column>
+        
+        <Column isSize={4}>
+          <Button isOutlined isLoading={isLoadingReading} isColor='danger' isSize='medium' onClick={readingClick}><b> DELETE </b></Button>
+        </Column>
+      </Columns>
+
     </Column>
   </Columns>
 
