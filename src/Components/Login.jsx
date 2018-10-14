@@ -61,37 +61,37 @@ export default class Login extends Component {
 
   render() {
     return (
-      <section class="hero is-fullheight">
-        <div class="hero-body">
-          <div class="container has-text-centered">
-            <div class="column is-4 is-offset-4">
-              <p class="subtitle has-text-grey">Please login to proceed.</p>
-              <div class="box">
+      <section className="hero is-fullheight">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            <div className="column is-4 is-offset-4">
+              <p className="subtitle has-text-grey">Please login to proceed.</p>
+              <div className="box">
                 <form onSubmit={this.onSubmit}>
                   {this.state.errMsg && (
-                    <div class="notification is-danger">
-                      <button class="delete" />
+                    <div className="notification is-danger">
+                      <button className="delete" />
                       {this.state.errMsg}
                     </div>
                   )}
-                  <div class="field">
-                    <div class="control">
+                  <div className="field">
+                    <div className="control">
                       <input
-                        class="input"
+                        className="input"
                         type="email"
                         name="email"
                         placeholder="Your Email"
-                        autofocus=""
+                        autoFocus=""
                         onChange={this.handleInputChange}
                         required
                       />
                     </div>
                   </div>
 
-                  <div class="field">
-                    <div class="control">
+                  <div className="field">
+                    <div className="control">
                       <input
-                        class="input"
+                        className="input"
                         type="password"
                         name="password"
                         placeholder="Your Password"
@@ -100,18 +100,18 @@ export default class Login extends Component {
                       />
                     </div>
                   </div>
-                  <div class="field">
-                    <label class="checkbox">
+                  <div className="field">
+                    <label className="checkbox">
                       <input type="checkbox" />
                       Remember me
                     </label>
                   </div>
-                  <button class="button is-block is-primary is-fullwidth" type="submit">
+                  <button className="button is-block is-primary is-fullwidth" type="submit">
                     Login
                   </button>
                 </form>
               </div>
-              <p class="has-text-grey">
+              <p className="has-text-grey">
                 <a href="../">Sign Up</a> &nbsp;·&nbsp;
               </p>
             </div>
