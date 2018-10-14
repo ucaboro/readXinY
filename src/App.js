@@ -21,7 +21,7 @@ constructor(){
 
 //setting isActive on tab click
 handleCheck(e) {
-  let new_class = ''
+  let new_class = ` `
   let tabsNum = document.getElementById('tabs').childNodes.length
   for (let i=0; i<tabsNum;i++){
       document.getElementById('tabs').childNodes[i].setAttribute( 'class', new_class );
@@ -43,10 +43,10 @@ handleCheck(e) {
               <Tab  onClick={this.handleCheck}>
                 <Link style={{textDecoration: 'none'}} to='/login'>Login</Link>
               </Tab>
-              <Tab onClick={this.handleCheck}>
+              <Tab onClick={this.handleCheck} id="searchTab">
                 <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
               </Tab>
-              <Tab onClick={this.handleCheck}>
+              <Tab onClick={this.handleCheck} id="mainTab">
                 <Link style={{textDecoration: 'none'}} to='/main'>Main</Link>
               </Tab>
               <Tab onClick={this.handleCheck}>

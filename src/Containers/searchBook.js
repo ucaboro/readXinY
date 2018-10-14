@@ -16,7 +16,9 @@ import {
   isMobile
 } from "react-device-detect";
 
+
 import request from 'superagent';
+import { withRouter, Link } from "react-router-dom";
 
 
 export const ReadingBooks = [];
@@ -51,8 +53,18 @@ class searchBook extends Component {
     this.pushToRead = this.pushToRead.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.findBooks = this.findBooks.bind(this)
-
+         books = []
   }
+
+clickDone = () =>{
+  let clickedTab = document.getElementById('mainTab')
+  let newClass = ' '
+  let tabsNum = document.getElementById('tabs').childNodes.length
+  for (let i=0; i<tabsNum;i++){
+      document.getElementById('tabs').childNodes[i].setAttribute( 'class', newClass );
+  }
+  clickedTab.setAttribute( 'class', 'is-active' )
+}
 
 
 closeModal = () =>{
@@ -312,7 +324,7 @@ findBooks = () => {
             {/*<ReadingContainer title="READING"/>*/}
 
             {isBrowser
-              ?  <FoundContainerDesktop books={books}/>
+              ?  <FoundContainerDesktop onDoneClick={this.clickDone} books={books}/>
             : <FoundContainerMobile books={books}/> }
 
 
@@ -373,7 +385,9 @@ const FoundContainerDesktop = (props) => (
           {props.books}
       </Columns>
     </Box>
-     <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
+     <Link to="/main">
+     <Button  isColor='info' isSize="large" className="customButton" isOutlined onClick={props.onDoneClick}> DONE</Button>
+     </Link>
   </Column>
 )
 
@@ -466,7 +480,7 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick}) =
         <Column isSize={4}>
           <Button isLoading={isLoadingReading} isColor='info' isSize='medium' onClick={readingClick}><b> SAVE</b></Button>
         </Column>
-        
+
         <Column isSize={4}>
           <Button isOutlined isLoading={isLoadingReading} isColor='danger' isSize='medium' onClick={readingClick}><b> DELETE </b></Button>
         </Column>
