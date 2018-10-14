@@ -99,11 +99,16 @@ input:focus::-webkit-input-placeholder {
   overflow-x: auto;
 }
 
+.trackerNotification{
+   -webkit-transition: width 1s linear .5s, height 1s linear .5s;
+   position: relative;
+}
 
 .scrollBar::-webkit-scrollbar {
   width: 5px;
   height: 5px
 }
+
 
 .scrollBar::-webkit-scrollbar-thumb {
   background: #BEBEBE;
