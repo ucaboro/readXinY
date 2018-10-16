@@ -130,3 +130,52 @@ input:focus::-webkit-input-placeholder {
 .searchBooksInput{
   width: 350px;
 }
+
+
+.customBlockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+.customBlockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+.customBlockquote p {
+  display: inline;
+}
+
+.customCode{
+background-color: rgba(0, 0, 0, 0.05);
+padding: 2;
+font-family: 'Inconsolata', "Menlo", "Consolas", monospace;
+font-size: 16;
+}
+
+.deleteTag{
+  cursor: pointer;
+}
+.editors{
+  padding: 10px;
+padding-left: 25px;
+padding-right: 25px;
+margin-bottom: 50px;
+}
+.editorContainer{
+padding-top: 15px;
+border: 1px;
+border-style: solid;
+border-color: lightgrey;
+border-radius: 25px;
+}
+
+.customHeader{
+  font-weight: bold;
+  font-size: 30px;
+}

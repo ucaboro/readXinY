@@ -15,6 +15,8 @@ import {
   isBrowser,
   isMobile
 } from "react-device-detect";
+import RichText from '../Components/richText.js'
+import {TIMEFRAME} from '../App.js'
 
 
 import request from 'superagent';
@@ -303,7 +305,7 @@ findBooks = () => {
         />
         <Columns isCentered isMultiline  >
           <Column className="mainHeading" isSize={12}>
-            <Title isSize={2}>Read X in Y</Title>
+            <Title>{TIMEFRAME.toString()}</Title>
           </Column>
 
 
@@ -465,9 +467,7 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick}) =
     <Column isSize={12} style={{textAlign: 'center'}}>
       <Field>
          <Label>Comments</Label>
-         <Control>
-             <TextArea placeholder={'Add thoughts, ideas, quotes and comments from the book'} />
-         </Control>
+            <RichText/>
      </Field>
     </Column>
 

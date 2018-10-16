@@ -10,6 +10,7 @@ import {Column, Tabs, TabList, TabLink, Tab} from 'bloomer';
 
 import {BrowserRouter,Route, Link} from 'react-router-dom';
 
+export const TIMEFRAME = []
 
 class App extends Component {
 constructor(){

@@ -7,7 +7,7 @@ import {Columns, Column, Button,
         Modal, ModalBackground, ModalContent,
         ModalClose, Media, MediaLeft, MediaRight,
         MediaContent, Icon, Image, Content, Level,
-        Delete, LevelLeft, LevelItem, Progress, Select, Notification} from 'bloomer';
+        Delete, LevelLeft, LevelItem, Progress, Select, Notification, Tag} from 'bloomer';
 import Book from '../Components/book.js'
 import {BookPopup, MediaPopup, ReadingBooks as addedBooks1, ToReadBooks as addedBooks2} from '../Containers/searchBook.js'
 import {
@@ -18,7 +18,7 @@ import {
       } from "react-device-detect";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import {TIMEFRAME} from '../App.js'
 
 
 
@@ -38,7 +38,7 @@ let ToReadBooks = [];
             x: '',
             y: '',
             timeframe: '',
-            trackingTitle: '',
+            trackingTitle: TIMEFRAME.toString(),
             activatedBookTitle: '',
             activatedBookAuthor:'',
             activatedCover: '',
@@ -52,7 +52,7 @@ let ToReadBooks = [];
           this.notify = this.notify.bind(this)
 
           //this.loadBooks()
-
+          console.log(TIMEFRAME)
         }
 
 componentWillMount(){
@@ -91,6 +91,7 @@ notify = () => {
     this.setState({
       trackingTitle: `Read ${this.state.x}  in  ${this.state.y}  ${this.state.timeframe} `
     })
+    TIMEFRAME.push(`Read ${this.state.x}  in  ${this.state.y}  ${this.state.timeframe} `)
   }
 }
 
@@ -124,7 +125,10 @@ loadBooks = () =>{
 render(){
 
 
-let title = (            <Title>READ <input id='x' placeholder='  X' className='XandYinput' onChange={this.getInputValue}/> IN <input id='y' placeholder='  Y' className='XandYinput' onChange={this.getInputValue}/>
+let title = (
+  <Column className="mainHeading" isSize={12}>
+
+  <Title>READ <input id='x' placeholder='  X' className='XandYinput' onChange={this.getInputValue}/> IN <input id='y' placeholder='  Y' className='XandYinput' onChange={this.getInputValue}/>
                       &nbsp;&nbsp;&nbsp;
                       <Select id='timeframe' onChange={this.getInputValue} isSize='medium' style={{}} >
                             <option>Days</option>
@@ -133,16 +137,22 @@ let title = (            <Title>READ <input id='x' placeholder='  X' className='
                         </Select>
                         &nbsp;&nbsp;&nbsp;
                         <Button isColor='info' isSize="medium" onClick={this.notify} >Track it!</Button>
-                      </Title>)
+                      </Title>
+                    </Column>)
 
 let trackingTitle = (
+  <Column className="mainHeading" isSize={12}>
   <Title>
-    {this.state.trackingTitle}
+    {TIMEFRAME.toString()}
+    <Tag className="deleteTag"isColor='danger'onClick={()=>alert('this supposed to reset tracker value in db')}>reset</Tag>
   </Title>
+  </Column>
 )
 
   return(
     <div className="App">
+
+
 
       <BookPopup
         isActive={this.state.isActive!=false?'is-active':''}
