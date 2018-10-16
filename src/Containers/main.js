@@ -2,24 +2,15 @@ import React, { Component } from 'react';
 import 'bulma/css/bulma.css'
 import '../App.css';
 import {Columns, Column, Button,
-        Title, Subtitle, Field,
-        Control, Input, Box,
-        Modal, ModalBackground, ModalContent,
-        ModalClose, Media, MediaLeft, MediaRight,
-        MediaContent, Icon, Image, Content, Level,
-        Delete, LevelLeft, LevelItem, Progress, Select, Notification, Tag} from 'bloomer';
+        Title, Subtitle,
+         Box,
+       Progress, Select, Tag} from 'bloomer';
 import Book from '../Components/book.js'
-import {BookPopup, MediaPopup, ReadingBooks as addedBooks1, ToReadBooks as addedBooks2} from '../Containers/searchBook.js'
-import {
-        BrowserView,
-        MobileView,
-        isBrowser,
-        isMobile
-      } from "react-device-detect";
+import {BookPopup, ReadingBooks as addedBooks1, ToReadBooks as addedBooks2} from '../Containers/searchBook.js'
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TIMEFRAME} from '../App.js'
-
 
 
 let ReadingBooks = [];
@@ -100,7 +91,7 @@ closeModal = () =>{
 }
 
 onMyBookClick = (e) =>{
-    if(this.state.isActive!=true){
+    if(this.state.isActive!==true){
 
       let bookId = e.target.parentNode.getAttribute('id')
       this.setState({isActive: !this.state.isActive, activatedBook: bookId})
@@ -155,7 +146,7 @@ let trackingTitle = (
 
 
       <BookPopup
-        isActive={this.state.isActive!=false?'is-active':''}
+        isActive={this.state.isActive!==false?'is-active':''}
         closeModal={this.closeModal}
         activatedBook={this.state.activatedBook}
         title = {this.state.activatedTitle}
@@ -169,13 +160,13 @@ let trackingTitle = (
       </div>
 
 
-      <Columns isCentered isMultiline  >
+      <Columns isMobile isCentered isMultiline>
           <Column isSize={12}>
-              {this.state.trackingTitle.length!=0? trackingTitle : title}
+              {this.state.trackingTitle.length!==0? trackingTitle : title}
           </Column>
 
-        <Column>
-          <Columns isCentered >
+        <Column isSize={12}>
+          <Columns  isCentered >
           <ReadingContainer title="READING" progressValue={this.state.progressValue} ReadingBooks={ReadingBooks}/>
           <ToReadContainer title="TO READ" />
           </Columns>
@@ -188,29 +179,10 @@ let trackingTitle = (
 }
 }
 
-const ReadingContainer = (props) => {
-  if (isBrowser){
-    return (
-      <Column>
-        <Progress isSize='medium' isColor='info' style={{marginBottom:'-15px'}} value={props.progressValue} max={100}/>
-        <Box>
-          <Subtitle isSize={3}>{props.title}</Subtitle>
-          <div className="divider"/>
-          <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
-          {props.ReadingBooks}
-          </Columns>
-        </Box>
-      </Column>
-    )
-  }
-    return ("")
-}
-
 const ToReadContainer = ({title}) => {
-  if (isBrowser){
+
     return (
       <Column>
-        <Progress isSize='medium' isColor='info' style={{marginBottom:'-15px', visibility: 'hidden'}} value={45} max={100}/>
         <Box>
           <Subtitle isSize={3}>{title}</Subtitle>
           <div className="divider"/>
@@ -221,5 +193,20 @@ const ToReadContainer = ({title}) => {
       </Column>
     )
   }
-    return ("")
-}
+
+
+const ReadingContainer = (props) => {
+
+    return (
+      <Column>
+        <Progress isSize='medium' isColor='info' style={{marginBottom:'-15px'}} value={45} max={100}/>
+        <Box>
+          <Subtitle isSize={3}>{props.title}</Subtitle>
+          <div className="divider"/>
+          <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
+          {props.ReadingBooks}
+          </Columns>
+        </Box>
+      </Column>
+    )
+  }

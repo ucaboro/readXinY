@@ -5,22 +5,20 @@ import {Columns, Column, Button,
         Title, Subtitle, Field,
         Control, Input, Box,
         Modal, ModalBackground, ModalContent,
-        ModalClose, Media, MediaLeft, MediaRight,
-        MediaContent, Icon, Image, Content, Level,
-      Delete, LevelLeft, LevelItem, Label, TextArea} from 'bloomer';
+        ModalClose, Image,
+       Label} from 'bloomer';
 import Book from '../Components/book.js'
 import {
-  BrowserView,
-  MobileView,
+
   isBrowser,
-  isMobile
+
 } from "react-device-detect";
 import RichText from '../Components/richText.js'
 import {TIMEFRAME} from '../App.js'
 
 
 import request from 'superagent';
-import { withRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 export const ReadingBooks = [];
@@ -58,15 +56,15 @@ class searchBook extends Component {
          books = []
   }
 
-clickDone = () =>{
-  let clickedTab = document.getElementById('mainTab')
-  let newClass = ' '
-  let tabsNum = document.getElementById('tabs').childNodes.length
-  for (let i=0; i<tabsNum;i++){
+  clickDone = () =>{
+    let clickedTab = document.getElementById('mainTab')
+    let newClass = ' '
+    let tabsNum = document.getElementById('tabs').childNodes.length
+    for (let i=0; i<tabsNum;i++){
       document.getElementById('tabs').childNodes[i].setAttribute( 'class', newClass );
+    }
+    clickedTab.setAttribute( 'class', 'is-active' )
   }
-  clickedTab.setAttribute( 'class', 'is-active' )
-}
 
 
 closeModal = () =>{
@@ -93,7 +91,7 @@ pushToReading = () =>{
 this.setState({
   isLoadingReading: true
 })
-  if(this.state.activatedBook!=null){
+  if(this.state.activatedBook!==null){
     let num = this.state.activatedBook
     var b =  document.getElementById(this.state.activatedBook)
     let pic = b.children[0].children[0].src
@@ -119,7 +117,7 @@ pushToRead = () =>{
 this.setState({
   isLoadingRead: true
 })
-  if(this.state.activatedBook!=null){
+  if(this.state.activatedBook!==null){
     let num = this.state.activatedBook
     var b =  document.getElementById(this.state.activatedBook)
     let pic = b.children[0].children[0].src
@@ -143,7 +141,7 @@ this.setState({
 
 
 getBookInfo = (e) =>{
-  if(this.state.isActive!=true){
+  if(this.state.isActive!==true){
 
     //get extra info on the books (using volume ID as there are too many identifier types e.g. esbn10, esbn13, other etc)
     let bookId = e.target.parentNode.getAttribute('id')
@@ -206,7 +204,7 @@ findBooks = () => {
   books = [];
   let query = this.state.searchQuery
   let numberOfBooks = 30
-  if(query.length!=0 && query!=undefined){
+  if(query.length!==0 && query!==undefined){
     this.setState({searchQueryLoading: true})
   request
    .get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=${numberOfBooks}&filter=ebooks&printType=books&orderBy=relevance`)
@@ -283,13 +281,13 @@ findBooks = () => {
       <div className="App">
       <BookPopup
         page = {'search'}
-        isActive={this.state.isActive!=false?'is-active':''}
+        isActive={this.state.isActive!==false?'is-active':''}
         closeModal={this.closeModal}
         activatedBook={this.state.activatedBook}
         readingClick={this.pushToReading}
         toReadClick={this.pushToRead}
-        isLoadingRead={this.state.isLoadingRead!=false?'is-loading':''}
-        isLoadingReading={this.state.isLoadingReading!=false?'is-loading':''}
+        isLoadingRead={this.state.isLoadingRead!==false?'is-loading':''}
+        isLoadingReading={this.state.isLoadingReading!==false?'is-loading':''}
 
         title = {this.state.activatedTitle}
         cover = {this.state.activatedCover}
@@ -315,7 +313,7 @@ findBooks = () => {
                   <Input onChange={this.handleChange} isSize="medium" type="text" placeholder="Start typing"/>
                   <span className="underline"></span>
                 </Control>
-                <Button onClick={this.findBooks} isLoading={this.state.searchQueryLoading!=false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
+                <Button onClick={this.findBooks} isLoading={this.state.searchQueryLoading!==false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
                </Field>
           </Column>
 
@@ -327,7 +325,7 @@ findBooks = () => {
 
             {isBrowser
               ?  <FoundContainerDesktop onDoneClick={this.clickDone} books={books}/>
-            : <FoundContainerMobile books={books}/> }
+            : <FoundContainerMobile onDoneClick={this.clickDone} books={books}/> }
 
 
             {/*<ToReadContainer title="TO READ"/>*/}
@@ -402,7 +400,9 @@ const FoundContainerMobile = (props) => (
       {props.books}
       </Columns>
     </Box>
-     <Button isColor='info' isSize="large" className="customButton" isOutlined>DONE</Button>
+    <Link to="/main">
+    <Button  isColor='info' isSize="large" className="customButton" isOutlined onClick={props.onDoneClick}> DONE</Button>
+    </Link>
   </Column>
 )
 
@@ -428,8 +428,8 @@ const FoundContainerMobile = (props) => (
       <br/>
         <p>
           {description || 'no description'}
-          {description != ''  ?
-            <a onClick={readMore}> {toggleReadMore!=true ? 'more' : ''}</a>
+          {description !== ''  ?
+            <a onClick={readMore}> {toggleReadMore!==true ? 'more' : ''}</a>
           : ''}
         </p>
       <br/>
@@ -506,9 +506,6 @@ const MediaGroup = (props) => {
 }
 
 export class BookPopup extends Component{
-  constructor(props){
-    super(props)
-  }
 
   render(){
     return(
