@@ -60,7 +60,7 @@ handleShareCheck = () =>{
               <Tab onClick={this.handleCheck} id="searchTab">
                 <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
               </Tab>
-              <Tab onClick={this.handleCheck}>
+              <Tab onClick={this.handleCheck} id="mainTab">
                 <Link style={{textDecoration: 'none'}} to='/main'>Main</Link>
               </Tab>
               <Tab onClick={this.handleShareCheck}>

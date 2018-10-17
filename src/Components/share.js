@@ -7,7 +7,8 @@ Delete,
 Box,
 Button,
 Columns,
-Column
+Column,
+Icon
 } from 'bloomer';
 import posed from 'react-pose';
 
@@ -37,12 +38,12 @@ export default class Share extends Component {
               <Delete onClick={this.props.deleteClick} />
           </MessageHeader>
           <MessageBody style={{paddingRight: '50px', backgroundColor:'lightgrey'}}>
-          <Columns isMobile>
+          <Columns isMobile isMultiline>
           <Column isSize={10}>
-          <Box>URL TO SHARE </Box>
+          <Box className="shareUrl"> <p>URL TO SHARE</p> </Box>
           </Column>
           <Column isSize={2} style={{alignSelf: 'center'}}>
-          <Button isColor='info' isSize="large">Copy</Button>
+          <Button className="shareBtn"isColor='info' isSize="large"><Icon className="far fa-clone " /></Button>
           </Column>
           </Columns>
           </MessageBody>
