@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import request from 'superagent';
 import {Link} from 'react-router-dom';
 
-export default class Login extends Component {
+
+export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,7 +67,7 @@ export default class Login extends Component {
         <div className="">
           <div className="container has-text-centered">
             <div className="column is-4 is-offset-4">
-              <p className="subtitle has-text-grey">Please login to proceed.</p>
+              <p className="subtitle has-text-grey">Please sign up to proceed.</p>
               <div className="box">
                 <form onSubmit={this.onSubmit}>
                   {this.state.errMsg && (
@@ -99,6 +100,20 @@ export default class Login extends Component {
                         onChange={this.handleInputChange}
                         required
                       />
+
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="password2"
+                          name="password2"
+                          placeholder="Confirm Your Password"
+                          onChange={this.handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
+
                     </div>
                   </div>
                   <div className="field">
@@ -113,9 +128,9 @@ export default class Login extends Component {
                 </form>
               </div>
               <p className="has-text-grey">
-                <Link to="/signup">
-                  Sign Up &nbsp;·&nbsp;
-                </Link>
+              <Link to="/login">
+                Login &nbsp;·&nbsp;
+              </Link>
               </p>
             </div>
           </div>

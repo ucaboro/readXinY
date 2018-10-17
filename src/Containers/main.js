@@ -1,16 +1,24 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import 'bulma/css/bulma.css'
 import '../App.css';
-import {Columns, Column, Button,
-        Title, Subtitle,
-         Box,
-       Progress, Select, Tag} from 'bloomer';
+import {
+  Columns,
+  Column,
+  Button,
+  Title,
+  Subtitle,
+  Box,
+  Progress,
+  Select,
+  Tag
+} from 'bloomer';
 import Book from '../Components/book.js'
 import {BookPopup, ReadingBooks as addedBooks1, ToReadBooks as addedBooks2} from '../Containers/searchBook.js'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TIMEFRAME} from '../App.js'
+
 
 
 let ReadingBooks = [];
@@ -43,7 +51,6 @@ let ToReadBooks = [];
           this.notify = this.notify.bind(this)
 
           //this.loadBooks()
-          console.log(TIMEFRAME)
         }
 
 componentWillMount(){
