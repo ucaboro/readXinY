@@ -18,14 +18,16 @@ import {BookPopup, ReadingBooks as addedBooks1, ToReadBooks as addedBooks2} from
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TIMEFRAME} from '../App.js'
-
+import withAuthorization from '../Components/withAuthorization';
+import { db } from '../firebase/index.js';
 
 
 let ReadingBooks = [];
 
 let ToReadBooks = [];
 
-      export default class main extends Component {
+
+      class main extends Component {
         constructor(props){
           super(props)
           this.state = {
@@ -54,6 +56,7 @@ let ToReadBooks = [];
         }
 
 componentWillMount(){
+  console.log(db.onceGetUsers().then(snapshot =>snapshot.val()))
 
    ReadingBooks = addedBooks1.map((i) =>
    <Book id={i.props.id} key={i.key} title={i.props.title} subtitle={i.props.subtitle} isSize={4} onBookClick={this.onMyBookClick} cover={i.props.cover} style={{backgroundColor:'blue'}}/>
@@ -62,9 +65,10 @@ componentWillMount(){
  ToReadBooks = addedBooks2.map((i) =>
  <Book id={i.props.id} key={i.key} title={i.props.title} subtitle={i.props.subtitle} isSize={4} onBookClick={this.onMyBookClick} cover={i.props.cover} style={{backgroundColor:'blue'}}/>
 );
-
-
 }
+
+
+
 
 booksMouseOver = (e) =>{
 //document.getElementById(e.target.id).childNodes[0].childNodes[0].src='https://i.pinimg.com/originals/20/9f/86/209f863c17aeb880eabeded4f93aa541.png'
@@ -121,7 +125,7 @@ loadBooks = () =>{
 
 
 render(){
-
+ const { users } = this.state;
 
 let title = (
   <Column className="mainHeading" isSize={12}>
@@ -149,7 +153,6 @@ let trackingTitle = (
 
   return(
     <div className="App">
-
 
 
       <BookPopup
@@ -217,3 +220,7 @@ const ReadingContainer = (props) => {
       </Column>
     )
   }
+
+const authCondition = (authUser) => !!authUser;
+
+export default withAuthorization(authCondition)(main);

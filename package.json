@@ -6,6 +6,7 @@
     "bloomer": "^0.6.3",
     "bulma": "^0.7.1",
     "draft-js": "^0.10.5",
+    "firebase": "^5.5.5",
     "react": "^16.5.2",
     "react-beautiful-dnd": "^9.0.2",
     "react-device-detect": "^1.5.9",

@@ -1,66 +1,59 @@
 import React, { Component } from 'react';
 import request from 'superagent';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
+import { auth } from '../firebase/index.js';
+
+const byPropKey = (propertyName, value) => () => ({
+  [propertyName]: value,
+});
+
+const INITIAL_STATE = {
+  email: '',
+  password: '',
+  error: null,
+};
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      user: {
-        email: '',
-        password: '',
-      },
-      errMsg: '',
-    };
+      this.state = { ...INITIAL_STATE };
   }
 
-  handleInputChange = event => {
-    const { value, name } = event.target;
 
-    const user = {};
-    user[name] = value;
+  onSubmit = (event) => {
+  const {
+    email,
+    password,
+  } = this.state;
 
-    this.setState(user);
-  };
+  const {
+    history,
+  } = this.props;
 
-  onSubmit = event => {
-    event.preventDefault();
-    const api = 'http://localhost:3333/api/users/login';
-    /* fetch(api, {
-      method: "POST",
-      body: JSON.stringify(this.state),
-      headers: {
-        "Content-Type": "application/json"
-      }
+  auth.doSignInWithEmailAndPassword(email, password)
+    .then(() => {
+      this.setState({ ...INITIAL_STATE });
+      history.push(`/main`);
     })
-      .then(res => {
-        console.log({ res });
-        if (res.ok) {
-          console.log({ res });
-          this.props.history.push("/");
-        } else {
-          const error = new Error(res);
-          throw error;
-        }
-      })
-      .catch(err => {
-        console.error({ err });
-      }); */
+    .catch(error => {
+      this.setState(byPropKey('error', error));
+    });
 
-    request
-      .post(api)
-      .send(this.state)
-      .then(res => {
-        console.log('yay got:', res.body);
-        this.props.history.push('/');
-      })
-      .catch(err => {
-        console.error('err response:', err.response);
-        this.setState({ errMsg: err.response.text });
-      });
-  };
+  event.preventDefault();
+}
 
   render() {
+
+    const {
+      email,
+      password,
+      error,
+    } = this.state;
+
+    const isInvalid =
+      password === '' ||
+      email === '';
+
     return (
       <section className="hero is-fullheight">
         <div className="">
@@ -69,21 +62,22 @@ export default class Login extends Component {
               <p className="subtitle has-text-grey">Please login to proceed.</p>
               <div className="box">
                 <form onSubmit={this.onSubmit}>
-                  {this.state.errMsg && (
+                  {error && (
                     <div className="notification is-danger">
                       <button className="delete" />
-                      {this.state.errMsg}
+                      {error.message}
                     </div>
                   )}
                   <div className="field">
                     <div className="control">
                       <input
+                        value={email}
                         className="input"
                         type="email"
                         name="email"
                         placeholder="Your Email"
                         autoFocus=""
-                        onChange={this.handleInputChange}
+                        onChange={event => this.setState(byPropKey('email', event.target.value))}
                         required
                       />
                     </div>
@@ -92,11 +86,12 @@ export default class Login extends Component {
                   <div className="field">
                     <div className="control">
                       <input
+                        value={password}
                         className="input"
                         type="password"
                         name="password"
                         placeholder="Your Password"
-                        onChange={this.handleInputChange}
+                        onChange={this.handleInputChange}onChange={event => this.setState(byPropKey('password', event.target.value))}
                         required
                       />
                     </div>
@@ -107,7 +102,7 @@ export default class Login extends Component {
                       Remember me
                     </label>
                   </div>
-                  <button className="button is-block is-primary is-fullwidth" type="submit">
+                  <button disabled={isInvalid} className="button is-block is-primary is-fullwidth" type="submit">
                     Login
                   </button>
                 </form>

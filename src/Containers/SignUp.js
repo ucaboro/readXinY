@@ -1,19 +1,28 @@
 import React, { Component } from 'react';
 import request from 'superagent';
-import {Link} from 'react-router-dom';
+import {
+  Link,
+  withRouter,
+} from 'react-router-dom';
+import { auth, db } from '../firebase/index.js';
 
 
-export default class SignUp extends Component {
+const byPropKey = (propertyName, value) => () => ({
+  [propertyName]: value,
+});
+
+const INITIAL_STATE = {
+  email: '',
+  passwordOne: '',
+  passwordTwo: '',
+  error: '',
+};
+
+class SignUp extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      user: {
-        email: '',
-        password: '',
-      },
-      errMsg: '',
-    };
-  }
+      this.state = { ...INITIAL_STATE };
+}
 
   handleInputChange = event => {
     const { value, name } = event.target;
@@ -24,10 +33,41 @@ export default class SignUp extends Component {
     this.setState(user);
   };
 
-  onSubmit = event => {
+  onSubmit = (event) => {
+  const {
+    email,
+    passwordOne,
+  } = this.state;
+
+  const {
+  history,
+  } = this.props;
+
+  auth.doCreateUserWithEmailAndPassword(email, passwordOne)
+    .then(authUser => {
+      // Create a user in your own accessible Firebase Database too
+      db.doCreateUser(authUser.user.uid, email)
+        .then(() => {
+          this.setState({ ...INITIAL_STATE });
+          history.push(`/main/${authUser.user.uid}`);
+        })
+        .catch(error => {
+          this.setState(byPropKey('error', error));
+        });
+    })
+    .catch(error => {
+      this.setState(byPropKey('error', error));
+
+    });
+
+  event.preventDefault();
+}
+
+
+  /*onSubmit = event => {
     event.preventDefault();
     const api = 'http://localhost:3333/api/users/login';
-    /* fetch(api, {
+      fetch(api, {
       method: "POST",
       body: JSON.stringify(this.state),
       headers: {
@@ -46,7 +86,7 @@ export default class SignUp extends Component {
       })
       .catch(err => {
         console.error({ err });
-      }); */
+      });
 
     request
       .post(api)
@@ -59,9 +99,22 @@ export default class SignUp extends Component {
         console.error('err response:', err.response);
         this.setState({ errMsg: err.response.text });
       });
-  };
+  };*/
 
   render() {
+    const {
+      email,
+      passwordOne,
+      passwordTwo,
+      error,
+    } = this.state;
+
+    const isInvalid =
+      passwordOne !== passwordTwo ||
+      passwordOne === '' ||
+      email === ''
+
+
     return (
       <section className="hero is-fullheight">
         <div className="">
@@ -70,10 +123,10 @@ export default class SignUp extends Component {
               <p className="subtitle has-text-grey">Please sign up to proceed.</p>
               <div className="box">
                 <form onSubmit={this.onSubmit}>
-                  {this.state.errMsg && (
+                  {error && (
                     <div className="notification is-danger">
-                      <button className="delete" />
-                      {this.state.errMsg}
+                      <button className="delete" onClick={()=>this.setState({error: ''})} />
+                      {error.message}
                     </div>
                   )}
                   <div className="field">
@@ -84,7 +137,8 @@ export default class SignUp extends Component {
                         name="email"
                         placeholder="Your Email"
                         autoFocus=""
-                        onChange={this.handleInputChange}
+                        value={email}
+                        onChange={event => this.setState(byPropKey('email', event.target.value))}
                         required
                       />
                     </div>
@@ -95,9 +149,9 @@ export default class SignUp extends Component {
                       <input
                         className="input"
                         type="password"
-                        name="password"
                         placeholder="Your Password"
-                        onChange={this.handleInputChange}
+                        onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+                        value={passwordOne}
                         required
                       />
 
@@ -105,10 +159,10 @@ export default class SignUp extends Component {
                       <div className="control">
                         <input
                           className="input"
-                          type="password2"
-                          name="password2"
+                          type="password"
                           placeholder="Confirm Your Password"
-                          onChange={this.handleInputChange}
+                          onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+                          value={passwordTwo}
                           required
                         />
                       </div>
@@ -122,7 +176,7 @@ export default class SignUp extends Component {
                       Remember me
                     </label>
                   </div>
-                  <button className="button is-block is-primary is-fullwidth" type="submit">
+                  <button disabled={isInvalid} className="button is-block is-primary is-fullwidth" type="submit">
                     Login
                   </button>
                 </form>
@@ -139,3 +193,5 @@ export default class SignUp extends Component {
     );
   }
 }
+
+export default withRouter(SignUp);

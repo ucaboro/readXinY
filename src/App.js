@@ -8,6 +8,9 @@ import searchBook from './Containers/searchBook.js';
 import main from './Containers/main.js'
 import Share from './Components/share.js'
 import {Column, Tabs, TabList, Tab} from 'bloomer';
+import { auth, firebase } from './firebase/index.js';
+import AuthUserContext from './AuthUserContext';
+
 
 
 import {BrowserRouter,Route, Link} from 'react-router-dom';
@@ -19,8 +22,17 @@ constructor(){
   super()
   this.state={
     isActive:'isActive',
-    shareActive: false
+    shareActive: false,
+    authUser: null
   }
+}
+
+componentDidMount() {
+  firebase.auth.onAuthStateChanged(authUser => {
+    authUser
+      ? this.setState({ authUser })
+      : this.setState({ authUser: null });
+  });
 }
 
 //setting isActive on tab click
@@ -41,33 +53,13 @@ handleShareCheck = () =>{
 }
 
   render() {
+    const { authUser } = this.state;
     return(
+      <AuthUserContext.Provider value={authUser}>
       <BrowserRouter>
         <div>
           <Column isSize={12}>
-
-          <Tabs isAlign='centered'>
-            <TabList id='tabs'>
-              <Tab onClick={this.handleCheck}>
-                <Link style={{textDecoration: 'none'}} to='/welcome'>Welcome</Link>
-              </Tab>
-              <Tab  onClick={this.handleCheck}>
-                <Link style={{textDecoration: 'none'}} to='/login'>Login</Link>
-              </Tab>
-              <Tab  onClick={this.handleCheck}>
-                <Link style={{textDecoration: 'none'}} to='/signup'>Sign Up</Link>
-              </Tab>
-              <Tab onClick={this.handleCheck} id="searchTab">
-                <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
-              </Tab>
-              <Tab onClick={this.handleCheck} id="mainTab">
-                <Link style={{textDecoration: 'none'}} to='/main'>Main</Link>
-              </Tab>
-              <Tab onClick={this.handleShareCheck}>
-                <a>Share</a>
-              </Tab>
-            </TabList>
-          </Tabs>
+            <Navigation authUser={this.state.authUser} handleCheck={this.handleCheck} handleShareCheck={this.handleShareCheck}/>
           <Share shareActive={this.state.shareActive} deleteClick={this.handleShareCheck}/>
 
           </Column>
@@ -75,12 +67,66 @@ handleShareCheck = () =>{
           <Route  exact path='/login' component={login} />
           <Route  exact path='/signup' component={signup} />
           <Route  exact path='/search' component={searchBook} />
-          <Route  exact path='/main' component={main} />
+          <Route  path='/main' component={main} />
           <Route  exact path='/share' component={Share} />
         </div>
       </BrowserRouter>
+      </AuthUserContext.Provider>
     )
 }
 }
+
+const Navigation = ({ authUser, handleCheck, handleShareCheck }) =>
+  <AuthUserContext.Consumer>
+    { authUser => authUser
+        ? <NavigationAuth user={authUser} handleCheck={handleCheck} handleShareCheck={handleShareCheck}/>
+        : <NavigationNonAuth handleCheck={handleCheck} />
+    }
+  </AuthUserContext.Consumer>
+
+const NavigationAuth = (props) =>
+<div>
+<Tabs isAlign='centered'>
+  <TabList id='tabs'>
+    <Tab isActive={'fasle'}>
+      {props.user.email}
+    </Tab>
+    <Tab onClick={props.handleCheck}>
+      <Link style={{textDecoration: 'none'}} to='/welcome'>Welcome</Link>
+    </Tab>
+    <Tab onClick={props.handleCheck} id="searchTab">
+      <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
+    </Tab>
+    <Tab onClick={props.handleCheck} id="mainTab">
+      <Link style={{textDecoration: 'none'}} to={`/main/${props.user.uid}`}>Main</Link>
+    </Tab>
+    <Tab onClick={props.handleShareCheck}>
+      <a>Share</a>
+    </Tab>
+    <Tab onClick={auth.doSignOut}>
+      <Link style={{textDecoration: 'none'}} to='/login'>Log Out</Link>
+    </Tab>
+  </TabList>
+</Tabs>
+</div>
+
+
+const NavigationNonAuth = (props) =>
+<Tabs isAlign='centered'>
+  <TabList id='tabs'>
+    <Tab onClick={props.handleCheck}>
+      <Link style={{textDecoration: 'none'}} to='/welcome'>Welcome</Link>
+    </Tab>
+    <Tab  onClick={props.handleCheck}>
+      <Link style={{textDecoration: 'none'}} to='/login'>Login</Link>
+    </Tab>
+    <Tab  onClick={props.handleCheck}>
+      <Link style={{textDecoration: 'none'}} to='/signup'>Sign Up</Link>
+    </Tab>
+    <Tab onClick={props.handleCheck} id="searchTab">
+      <Link style={{textDecoration: 'none'}} to='/search'>Search Book</Link>
+    </Tab>
+  </TabList>
+</Tabs>
 
 export default App;
