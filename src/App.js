@@ -4,7 +4,7 @@ import './App.css';
 import login from './Components/Login';
 import signup from './Containers/SignUp';
 import welcome from './Containers/welcome.js';
-import searchBook from './Containers/searchBook.js';
+import SearchBook from './Containers/searchBook.js';
 import main from './Containers/main.js'
 import Share from './Components/share.js'
 import {Column, Tabs, TabList, Tab} from 'bloomer';
@@ -15,7 +15,9 @@ import AuthUserContext from './AuthUserContext';
 
 import {BrowserRouter,Route, Link} from 'react-router-dom';
 
+export let Uid = ''
 export const TIMEFRAME = []
+
 
 class App extends Component {
 constructor(){
@@ -54,6 +56,7 @@ handleShareCheck = () =>{
 
   render() {
     const { authUser } = this.state;
+
     return(
       <AuthUserContext.Provider value={authUser}>
       <BrowserRouter>
@@ -66,7 +69,7 @@ handleShareCheck = () =>{
           <Route  exact path='/welcome' component={welcome} />
           <Route  exact path='/login' component={login} />
           <Route  exact path='/signup' component={signup} />
-          <Route  exact path='/search' component={searchBook} />
+          <Route  exact path='/search' component={() => <SearchBook/>} />
           <Route  path='/main' component={main} />
           <Route  exact path='/share' component={Share} />
         </div>

@@ -19,7 +19,10 @@ import {TIMEFRAME} from '../App.js'
 
 import request from 'superagent';
 import { Link } from "react-router-dom";
+import { auth, firebase} from '../firebase/index.js';
+import { db } from '../firebase';
 
+import AuthUserContext from '../AuthUserContext.js'
 
 export const ReadingBooks = [];
 
@@ -31,6 +34,7 @@ class searchBook extends Component {
   constructor(props){
     super(props)
     this.state = {
+      authUserId:'',
       isActive: false,
       activatedBook: '',
       isLoadingReading: false,
@@ -55,6 +59,22 @@ class searchBook extends Component {
     this.findBooks = this.findBooks.bind(this)
          books = []
   }
+
+  async componentWillMount(){
+
+    //db.userBooks().on('value', snap => {
+    //  console.log(snap.val())
+    //})
+    if(auth.getCurrentUserId()!=null){
+    let user = await auth.getCurrentUserId()
+    this.setState({
+      authUserId: user.uid
+    })
+  }
+
+}
+
+
 
   clickDone = () =>{
     let clickedTab = document.getElementById('mainTab')
@@ -87,7 +107,7 @@ getAllBooks = (num, title, subtitle, cover, size) => {
    return books
 }
 
-pushToReading = () =>{
+ pushToReading = () =>{
 this.setState({
   isLoadingReading: true
 })
@@ -98,6 +118,8 @@ this.setState({
     let title = b.childNodes[1].textContent
     let subtitle = b.children[2].textContent
 
+    //push to db
+    db.addBookToReading(this.state.authUserId,num, title, subtitle, pic)
 
     ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
 
@@ -124,6 +146,8 @@ this.setState({
     let title = b.childNodes[1].textContent
     let subtitle = b.children[2].textContent
 
+    //push to db
+    db.addBookToRead(this.state.authUserId,num, title, subtitle, pic)
 
     ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
 
@@ -272,12 +296,17 @@ findBooks = () => {
 
   render() {
 
+
     let description = this.state.activatedDesc
     let noHTMLdescription = description!==undefined?description.replace(/<[^>]+>/g, ''):''
     let cutDescription = noHTMLdescription.substring(0,noHTMLdescription.length/4)
     let fullDescription = noHTMLdescription.substring(0,noHTMLdescription.length)
 
     return(
+
+
+      <AuthUserContext.Consumer>
+        {authUser =>
       <div className="App">
       <BookPopup
         page = {'search'}
@@ -335,6 +364,8 @@ findBooks = () => {
         </Columns>
 
     </div>
+    }
+    </AuthUserContext.Consumer>
     );
   }
 }

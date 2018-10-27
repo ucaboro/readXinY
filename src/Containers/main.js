@@ -19,7 +19,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TIMEFRAME} from '../App.js'
 import withAuthorization from '../Components/withAuthorization';
-import { db } from '../firebase/index.js';
+import { db,auth } from '../firebase/index.js';
+import AuthUserContext from '../AuthUserContext.js'
+
 
 
 let ReadingBooks = [];
@@ -31,6 +33,10 @@ let ToReadBooks = [];
         constructor(props){
           super(props)
           this.state = {
+            authUserId:'',
+            userBooks:'',
+            ReadingBooks: '',
+            ToReadBooks:'',
             isActive: false,
             activatedBook: '',
             isLoadingReading: false,
@@ -51,20 +57,63 @@ let ToReadBooks = [];
           //this.pushToRead = this.pushToRead.bind(this)
           this.getInputValue = this.getInputValue.bind(this)
           this.notify = this.notify.bind(this)
-
+          ReadingBooks = []
+          ToReadBooks = []
           //this.loadBooks()
         }
 
-componentWillMount(){
-  console.log(db.onceGetUsers().then(snapshot =>snapshot.val()))
+async componentWillMount(){
 
-   ReadingBooks = addedBooks1.map((i) =>
-   <Book id={i.props.id} key={i.key} title={i.props.title} subtitle={i.props.subtitle} isSize={4} onBookClick={this.onMyBookClick} cover={i.props.cover} style={{backgroundColor:'blue'}}/>
- );
 
- ToReadBooks = addedBooks2.map((i) =>
- <Book id={i.props.id} key={i.key} title={i.props.title} subtitle={i.props.subtitle} isSize={4} onBookClick={this.onMyBookClick} cover={i.props.cover} style={{backgroundColor:'blue'}}/>
-);
+  if(auth.getCurrentUserId()!=null){
+  let user = await auth.getCurrentUserId()
+  this.setState({
+    authUserId: user.uid
+  })
+
+
+
+  await db.userBooks(this.state.authUserId).on('value', snap=>{
+    let books = snap.val()
+    this.setState({
+      userBooks: books
+    })
+
+if (books!==null&&books!==undefined){
+
+
+ for(let i=0; i<Object.values(books).length; i++){
+
+   let num = Object.values(books)[i].id
+   let title = Object.values(books)[i].title
+   let subtitle = Object.values(books)[i].author
+   let pic = Object.values(books)[i].cover
+
+
+   if(Object.values(books)[i].category==='reading'){
+     ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.onMyBookClick}/>)
+
+   }else if(Object.values(books)[i].category==='to read'){
+     ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.onMyBookClick}/>)
+
+   }
+ }
+}
+ this.setState({
+   ReadingBooks: ReadingBooks,
+   ToReadBooks: ToReadBooks
+ })
+
+
+
+  })
+}
+
+
+
+
+
+
 }
 
 
@@ -127,6 +176,7 @@ loadBooks = () =>{
 render(){
  const { users } = this.state;
 
+
 let title = (
   <Column className="mainHeading" isSize={12}>
 
@@ -152,8 +202,10 @@ let trackingTitle = (
 )
 
   return(
+    <AuthUserContext.Consumer>
+    {authUser =>
     <div className="App">
-
+      <p>{authUser.uid}</p>
 
       <BookPopup
         isActive={this.state.isActive!==false?'is-active':''}
@@ -177,7 +229,7 @@ let trackingTitle = (
 
         <Column isSize={12}>
           <Columns  isCentered >
-          <ReadingContainer title="READING" progressValue={this.state.progressValue} ReadingBooks={ReadingBooks}/>
+          <ReadingContainer title="READING" progressValue={this.state.progressValue} ReadingBooks={this.state.ReadingBooks}/>
           <ToReadContainer title="TO READ" />
           </Columns>
         </Column>
@@ -185,6 +237,8 @@ let trackingTitle = (
       </Columns>
 
     </div>
+     }
+    </AuthUserContext.Consumer>
   )
 }
 }
@@ -214,7 +268,7 @@ const ReadingContainer = (props) => {
           <Subtitle isSize={3}>{props.title}</Subtitle>
           <div className="divider"/>
           <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
-          {props.ReadingBooks}
+          {props.ReadingBooks.length===0?'loading':props.ReadingBooks}
           </Columns>
         </Box>
       </Column>
