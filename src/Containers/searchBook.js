@@ -57,6 +57,7 @@ class searchBook extends Component {
     this.pushToRead = this.pushToRead.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.findBooks = this.findBooks.bind(this)
+
          books = []
   }
 
@@ -96,6 +97,14 @@ closeModal = () =>{
 
 handleChange(event) {
   this.setState({searchQuery: event.target.value});
+}
+
+onEnterClick(event){
+
+  var code = event.keyCode || event.which;
+    if(code === 13) { //13 is the enter keycode
+        document.getElementById("searchBtn").click();
+    } 
 }
 
 getAllBooks = (num, title, subtitle, cover, size) => {
@@ -337,12 +346,12 @@ findBooks = () => {
 
 
           <Column isSize={12}>
-              <Field isHorizontal hasAddons="centered">
-                <Control className="searchBooksInput">
-                  <Input onChange={this.handleChange} isSize="medium" type="text" placeholder="Start typing"/>
+              <Field isHorizontal hasAddons="centered" >
+                <Control className="searchBooksInput" >
+                  <Input onChange={this.handleChange} onKeyDown={this.onEnterClick.bind(this)} id='searchField' isSize="medium" type="text" placeholder="Start typing"/>
                   <span className="underline"></span>
                 </Control>
-                <Button onClick={this.findBooks} isLoading={this.state.searchQueryLoading!==false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
+                <Button  id="searchBtn" onClick={this.findBooks} isLoading={this.state.searchQueryLoading!==false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
                </Field>
           </Column>
 
