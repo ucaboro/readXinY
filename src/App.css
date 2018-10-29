@@ -91,6 +91,7 @@ input:focus::-webkit-input-placeholder {
 
 
 .foundScrollableMobile{
+  height: 200px;
   overflow-y: auto;
 }
 

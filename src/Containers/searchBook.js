@@ -100,11 +100,10 @@ handleChange(event) {
 }
 
 onEnterClick(event){
-
   var code = event.keyCode || event.which;
     if(code === 13) { //13 is the enter keycode
         document.getElementById("searchBtn").click();
-    } 
+    }
 }
 
 getAllBooks = (num, title, subtitle, cover, size) => {

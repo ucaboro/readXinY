@@ -13,6 +13,19 @@ export const onceGetUsers = () =>
 export const userBooks = (id) =>
 db.ref('users').child(id).child('books');
 
+export const getTrackers = (id) =>
+db.ref('users').child(id).child('trackers').child('currentTracker');
+
+export const deleteCurrentTracker = (id) =>
+ db.ref('users').child(id).child('trackers').child('currentTracker').remove();
+
+
+export const setTracker = (uid, tracker) => {
+  db.ref('users').child(uid).child('trackers').set({
+    currentTracker: tracker,
+  })
+};
+
 export const addBookToReading = (uid,bookId, title, author, cover) =>{
   db.ref('users').child(uid).child('books').push({
     id: bookId,
@@ -22,7 +35,7 @@ export const addBookToReading = (uid,bookId, title, author, cover) =>{
     category: 'reading',
     comment: 'add your comment',
   })
-}
+};
 
 export const addBookToRead = (uid,bookId, title, author, cover) =>{
   db.ref('users').child(uid).child('books').push({
@@ -33,7 +46,7 @@ export const addBookToRead = (uid,bookId, title, author, cover) =>{
     category: 'to read',
     comment: 'add your comment',
   })
-}
+};
 
 
 export const addCoinToCardId = (id, coin, amount, exchange, invested) => {
@@ -44,4 +57,4 @@ export const addCoinToCardId = (id, coin, amount, exchange, invested) => {
     exchange: exchange,
     invested: invested
   })
-}
+};

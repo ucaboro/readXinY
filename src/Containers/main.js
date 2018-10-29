@@ -62,6 +62,7 @@ let ToReadBooks = [];
           //this.loadBooks()
         }
 
+
 async componentWillMount(){
 
 
@@ -70,6 +71,18 @@ async componentWillMount(){
   this.setState({
     authUserId: user.uid
   })
+
+await db.getTrackers(this.state.authUserId).on('value', snap=>{
+  if (snap.val()!=undefined){
+let title = Object.values(snap.val()).toString()
+this.setState({
+  trackingTitle: title
+})
+}
+})
+
+
+
 
 
 
@@ -103,17 +116,8 @@ if (books!==null&&books!==undefined){
    ReadingBooks: ReadingBooks,
    ToReadBooks: ToReadBooks
  })
-
-
-
-  })
+})
 }
-
-
-
-
-
-
 }
 
 
@@ -143,7 +147,13 @@ notify = () => {
       trackingTitle: `Read ${this.state.x}  in  ${this.state.y}  ${this.state.timeframe} `
     })
     TIMEFRAME.push(`Read ${this.state.x}  in  ${this.state.y}  ${this.state.timeframe} `)
+    db.setTracker(this.state.authUserId, TIMEFRAME)
   }
+}
+
+ deleteTracker = () => {
+ db.deleteCurrentTracker(this.state.authUserId)
+ this.setState({trackingTitle: ''})
 }
 
 closeModal = () =>{
@@ -195,8 +205,8 @@ let title = (
 let trackingTitle = (
   <Column className="mainHeading" isSize={12}>
   <Title>
-    {TIMEFRAME.toString()}
-    <Tag className="deleteTag"isColor='danger'onClick={()=>alert('this supposed to reset tracker value in db')}>reset</Tag>
+    {this.state.trackingTitle.toString()}
+    <Tag className="deleteTag"isColor='danger'onClick={this.deleteTracker}>reset</Tag>
   </Title>
   </Column>
 )
