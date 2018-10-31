@@ -6,7 +6,7 @@ import {Columns, Column, Button,
         Control, Input, Box,
         Modal, ModalBackground, ModalContent,
         ModalClose, Image,
-       Label} from 'bloomer';
+       Label, Tag} from 'bloomer';
 import Book from '../Components/book.js'
 import {
 
@@ -51,6 +51,7 @@ class searchBook extends Component {
       activatedRank:'',
       activatedCategories:'',
       activatedBookReadMore: false,
+
     }
     this.getBookInfo = this.getBookInfo.bind(this)
     this.pushToReading = this.pushToReading.bind(this)
@@ -106,6 +107,8 @@ onEnterClick(event){
     }
 }
 
+
+
 getAllBooks = (num, title, subtitle, cover, size) => {
 
   for (let i=1; i<num; i++){
@@ -129,7 +132,7 @@ this.setState({
     //push to db
     db.addBookToReading(this.state.authUserId,num, title, subtitle, pic)
 
-    ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
+    //ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
 
     setTimeout(
     function() {
@@ -143,33 +146,51 @@ this.setState({
   }
 }
 
-pushToRead = () =>{
-this.setState({
-  isLoadingRead: true
-})
-  if(this.state.activatedBook!==null){
-    let num = this.state.activatedBook
-    var b =  document.getElementById(this.state.activatedBook)
-    let pic = b.children[0].children[0].src
-    let title = b.childNodes[1].textContent
-    let subtitle = b.children[2].textContent
-
-    //push to db
-    db.addBookToRead(this.state.authUserId,num, title, subtitle, pic)
-
-    ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
-
-    setTimeout(
-    function() {
-        this.setState({isLoadingRead: false,
-        isActive: !this.state.isActive});
-    }
-    .bind(this),
-    500
-);
-  }
+ async doesBookExist(){
+  let val = ''
+      await db.findBookById(this.state.authUserId, this.state.activatedBook).on('value', snap => {
+     if(snap.exists()){
+       val = true
+     }else{
+       val = false
+     }
+ })
+ return val
 
 }
+
+ async pushToRead(){
+
+         let exist = await this.doesBookExist();
+         console.log(exist)
+
+        this.setState({
+          isLoadingRead: true
+        })
+          if(this.state.activatedBook!==null){
+            let num = this.state.activatedBook
+            var b =  document.getElementById(this.state.activatedBook)
+            let pic = b.children[0].children[0].src
+            let title = b.childNodes[1].textContent
+            let subtitle = b.children[2].textContent
+            let bookId = ''
+
+            //push to db
+            //db.addBookToRead(this.state.authUserId,num, title, subtitle, pic)
+
+            //ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
+
+            setTimeout(
+            function() {
+                this.setState({isLoadingRead: false,
+                isActive: !this.state.isActive});
+            }
+            .bind(this),
+            500
+        );
+      }
+    }
+
 
 
 getBookInfo = (e) =>{
@@ -212,7 +233,6 @@ getBookInfo = (e) =>{
          activatedLink:res.body.volumeInfo.previewLink,
          activatedCover: cover
        })
-       console.log(res.body.volumeInfo)
      })
      .catch(err => {
         console.log(err)// err.message, err.response
@@ -302,6 +322,7 @@ findBooks = () => {
 
 
 
+
   render() {
 
 
@@ -331,12 +352,14 @@ findBooks = () => {
         author = {this.state.activatedAuthor}
         description = {this.state.activatedBookReadMore ? fullDescription : cutDescription}
 
+
         readMore = {() => { this.setState({activatedBookReadMore: !this.state.activatedBookReadMore})}}
         toggleReadMore = {this.state.activatedBookReadMore}
 
         link = {this.state.activatedLink}
         subtitle = {this.state.activatedSubtitle}
         category = {this.state.activatedCategories}
+
         />
         <Columns isCentered isMultiline  >
           <Column className="mainHeading" isSize={12}>
@@ -347,7 +370,7 @@ findBooks = () => {
           <Column isSize={12}>
               <Field isHorizontal hasAddons="centered" >
                 <Control className="searchBooksInput" >
-                  <Input onChange={this.handleChange} onKeyDown={this.onEnterClick.bind(this)} id='searchField' isSize="medium" type="text" placeholder="Start typing"/>
+                  <Input onChange={this.handleChange} onKeyDown={this.onEnterClick} id='searchField' isSize="medium" type="text" placeholder="Start typing"/>
                   <span className="underline"></span>
                 </Control>
                 <Button  id="searchBtn" onClick={this.findBooks} isLoading={this.state.searchQueryLoading!==false ? 'isLoading':''} isColor='info' isSize="medium" style={{marginLeft: '15px'}}>Search</Button>
@@ -490,15 +513,14 @@ const FoundContainerMobile = (props) => (
   </Columns>
 )
 
-const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick}) =>(
+const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick, deleteBook, addTag, hashtags}) =>(
   <Columns isMultiline isMobile>
-
-
     <Column isSize={12} style={{textAlign: 'center'}}>
        <Field>
           <Label>Hashtags</Label>
           <Control>
-              <Input type="text" placeholder='Add hashtags to categorise your books' />
+            {hashtags}
+              <Input onKeyDown={addTag} type="text" placeholder='Add hashtags to categorise your books' />
           </Control>
       </Field>
     </Column>
@@ -521,7 +543,7 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick}) =
         </Column>
 
         <Column isSize={4}>
-          <Button isOutlined isLoading={isLoadingReading} isColor='danger' isSize='medium' onClick={readingClick}><b> DELETE </b></Button>
+          <Button isOutlined isLoading={isLoadingReading} isColor='danger' isSize='medium' onClick={deleteBook}><b> DELETE </b></Button>
         </Column>
       </Columns>
 

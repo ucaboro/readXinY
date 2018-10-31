@@ -50,20 +50,27 @@ let ToReadBooks = [];
             activatedBookAuthor:'',
             activatedCover: '',
             activatedBookHashtags: '',
-            activatedBookComments:''
+            activatedBookComments:'',
+            activatedHashtags:''
+
           }
           //this.getBookInfo = this.getBookInfo.bind(this)
           //this.pushToReading = this.pushToReading.bind(this)
           //this.pushToRead = this.pushToRead.bind(this)
           this.getInputValue = this.getInputValue.bind(this)
           this.notify = this.notify.bind(this)
-          ReadingBooks = []
-          ToReadBooks = []
           //this.loadBooks()
         }
 
+componentDidUpdate(){
+  console.log(this.state);
+}
 
 async componentWillMount(){
+  console.log(this.state)
+//resetting books
+ReadingBooks = []
+ToReadBooks = []
 
 
   if(auth.getCurrentUserId()!=null){
@@ -72,29 +79,26 @@ async componentWillMount(){
     authUserId: user.uid
   })
 
+
 await db.getTrackers(this.state.authUserId).on('value', snap=>{
   if (snap.val()!=undefined){
-let title = Object.values(snap.val()).toString()
-this.setState({
-  trackingTitle: title
+    let title = Object.values(snap.val()).toString()
+      this.setState({
+          trackingTitle: title
+      })
+    }
 })
-}
-})
 
 
-
-
-
-
-  await db.userBooks(this.state.authUserId).on('value', snap=>{
-    let books = snap.val()
+await db.userBooks(this.state.authUserId).on('value', snap=>{
+  let books = snap.val()
     this.setState({
       userBooks: books
     })
 
 if (books!==null&&books!==undefined){
-
-
+  ReadingBooks =[]
+  ToReadBooks =[]
  for(let i=0; i<Object.values(books).length; i++){
 
    let num = Object.values(books)[i].id
@@ -117,7 +121,8 @@ if (books!==null&&books!==undefined){
    ToReadBooks: ToReadBooks
  })
 })
-}
+
+}//if user signed in
 }
 
 
@@ -125,6 +130,10 @@ if (books!==null&&books!==undefined){
 
 booksMouseOver = (e) =>{
 //document.getElementById(e.target.id).childNodes[0].childNodes[0].src='https://i.pinimg.com/originals/20/9f/86/209f863c17aeb880eabeded4f93aa541.png'
+
+}
+
+setUserIdState = () =>{
 
 }
 
@@ -169,7 +178,7 @@ onMyBookClick = (e) =>{
 }
 
 
-loadBooks = () =>{
+/*loadBooks = () =>{
   for (let i=1; i<17; i++){
     ReadingBooks.push( <Book mouseOver={this.booksMouseOver} key={i} id={i} title={'title' + i} subtitle={'subtitle'+i} isSize={4} onBookClick={this.onMyBookClick} cover='' style={{backgroundColor:'blue'}}/> )
    }
@@ -177,11 +186,44 @@ loadBooks = () =>{
    for (let n=0; n<3; n++){
      ToReadBooks.push( <Book key={n} id={n} title={'title' + n} subtitle={'subtitle'+n} isSize={4} onBookClick={this.onMyBookClick} cover=''/> )
     }
+}*/
+
+
+deleteBook = () => {
+
+  ReadingBooks =[]
+  ToReadBooks =[]
+  //this.resetReadingStates()
+  db.deleteBookById(this.state.authUserId, this.state.activatedBook)
+  this.setState({
+    isActive: false
+  })
 }
 
+resetReadingStates = () =>{
+  console.log('reset')
+  this.setState({
+    ReadingBooks: '',
+    ToReadBooks:'',
+    userBooks: ''
+  })
+}
 
+onEnterTagClick = (event) =>{
 
+  let code = event.keyCode || event.which;
+    if(code === 13) { //13 is the enter keycode
 
+      let oldTags = this.state.activatedHashtags
+      let newTag = <Tag className="hashtags" style={{marginRight: '5px'}} key={this.state.activatedHashtags.length+1} isColor='info'>#{event.target.value}</Tag>
+
+        this.setState({
+          activatedHashtags:[...oldTags, newTag]
+        })
+
+        event.target.value=''
+    }
+}
 
 render(){
  const { users } = this.state;
@@ -225,6 +267,9 @@ let trackingTitle = (
         cover = {this.state.activatedCover}
         author = {this.state.activatedAuthor}
         page = "main"
+        deleteBook ={this.deleteBook}
+        addTag={this.onEnterTagClick}
+        hashtags={this.state.activatedHashtags}
         />
 
       <div>
@@ -240,7 +285,7 @@ let trackingTitle = (
         <Column isSize={12}>
           <Columns  isCentered >
           <ReadingContainer title="READING" progressValue={this.state.progressValue} ReadingBooks={this.state.ReadingBooks}/>
-          <ToReadContainer title="TO READ" />
+          <ToReadContainer title="TO READ" ToReadBooks={this.state.ToReadBooks}/>
           </Columns>
         </Column>
 
@@ -253,7 +298,7 @@ let trackingTitle = (
 }
 }
 
-const ToReadContainer = ({title}) => {
+const ToReadContainer = ({title, ToReadBooks}) => {
 
     return (
       <Column>
@@ -261,7 +306,7 @@ const ToReadContainer = ({title}) => {
           <Subtitle isSize={3}>{title}</Subtitle>
           <div className="divider"/>
             <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
-            {ToReadBooks}
+            {ToReadBooks.length===0?'loading':ToReadBooks}
             </Columns>
         </Box>
       </Column>

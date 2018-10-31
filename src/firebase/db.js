@@ -49,12 +49,17 @@ export const addBookToRead = (uid,bookId, title, author, cover) =>{
 };
 
 
-export const addCoinToCardId = (id, coin, amount, exchange, invested) => {
-  const dbRef=db.ref().child(id).child(id);
-  dbRef.push({
-    coin: coin,
-    amount: amount,
-    exchange: exchange,
-    invested: invested
-  })
-};
+
+
+export const findBookById = (uid, bookId) =>
+  db.ref('users').child(uid).child('books').orderByChild('id').equalTo(bookId);
+
+export const deleteBookById = (uid, bookId) =>{
+let fbBookId =''
+findBookById(uid, bookId).on('value', snap =>{
+  if(snap.val()!=undefined&&snap.val()!=null){
+   fbBookId = Object.keys(snap.val()).toString()
+}
+})
+  db.ref('users').child(uid).child('books').child(fbBookId).remove();
+}

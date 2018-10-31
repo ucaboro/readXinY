@@ -2,6 +2,11 @@ import React from 'react';
 import {Editor, EditorState, RichUtils} from 'draft-js';
 import 'draft-js/dist/Draft.css'
 import {Button} from 'bloomer'
+import {
+
+  isBrowser,
+
+} from "react-device-detect";
 
 export default class RichText extends React.Component {
   constructor(props) {
@@ -60,17 +65,31 @@ onBlockHeaderlick = () => {
 
 
   render() {
+  let  browser = (
+      <div>
+          <Button onClick={this.onUnderlineClick}>U</Button>
+          <Button onClick={this.onBoldClick}><b>B</b></Button>
+          <Button onClick={this.onItalicClick}><em>I</em></Button>
+          <Button onClick={this.onCodeClick}>code</Button>
+          <Button onClick={this.onBlockQuoteClick}>blockquote</Button>
+          <Button onClick={this.onBlockCodeClick}>code</Button>
+          <Button onClick={this.onBlockULClick}>UL</Button>
+          <Button onClick={this.onBlockHeaderlick}>Header</Button>
+      </div>
+      )
+
+
+    let mobile = (
+    <div>
+      <Button className="is-rounded is-primary" style={{margin: '10px'}} onClick={this.onBoldClick}><b>B</b></Button>
+      <Button className="is-rounded is-link" style={{margin: '10px'}} onClick={this.onItalicClick}><em>I</em></Button>
+      <Button className="is-rounded is-info" style={{margin: '10px'}} onClick={this.onBlockHeaderlick}>Header</Button>
+    </div>
+  )
     return (
       <div className="editorContainer">
 
-      <Button onClick={this.onUnderlineClick}>U</Button>
-      <Button onClick={this.onBoldClick}><b>B</b></Button>
-      <Button onClick={this.onItalicClick}><em>I</em></Button>
-      <Button onClick={this.onCodeClick}>code</Button>
-      <Button onClick={this.onBlockQuoteClick}>blockquote</Button>
-      <Button onClick={this.onBlockCodeClick}>code</Button>
-      <Button onClick={this.onBlockULClick}>UL</Button>
-      <Button onClick={this.onBlockHeaderlick}>Header</Button>
+        {isBrowser? browser: mobile}
 
       <div className="editors">
       <Editor
