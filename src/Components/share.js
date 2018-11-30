@@ -11,6 +11,8 @@ Column,
 Icon
 } from 'bloomer';
 import posed from 'react-pose';
+import {isBrowser} from "react-device-detect";
+
 
 const Animate = posed.div({
   start: { y: -300, opacity: 0 },
@@ -26,9 +28,10 @@ export default class Share extends Component {
 
   render(){
     let height = this.props.shareActive ? '100%' : '0'
+    let width = isBrowser ? '50%' : '100%'
     return(
 
-    <div style={{textAlign: '-webkit-center', height}}>
+    <div style={{textAlign: '-webkit-center', margin: 'auto', height, width}}>
       <Animate
       pose={this.props.shareActive ? 'end' : 'start'}
       >

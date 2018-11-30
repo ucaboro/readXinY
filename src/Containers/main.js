@@ -21,12 +21,17 @@ import {TIMEFRAME} from '../App.js'
 import withAuthorization from '../Components/withAuthorization';
 import { db,auth } from '../firebase/index.js';
 import AuthUserContext from '../AuthUserContext.js'
+import {convertToRaw} from 'draft-js';
+
 
 
 
 let ReadingBooks = [];
 
 let ToReadBooks = [];
+
+//to push hashtags as a strings in the db
+let hashstrings = [];
 
 
       class main extends Component {
@@ -49,7 +54,6 @@ let ToReadBooks = [];
             activatedBookTitle: '',
             activatedBookAuthor:'',
             activatedCover: '',
-            activatedBookHashtags: '',
             activatedBookComments:'',
             activatedHashtags:''
 
@@ -59,12 +63,12 @@ let ToReadBooks = [];
           //this.pushToRead = this.pushToRead.bind(this)
           this.getInputValue = this.getInputValue.bind(this)
           this.notify = this.notify.bind(this)
+          this.onMyBookClick = this.onMyBookClick.bind(this)
           //this.loadBooks()
+
         }
 
-componentDidUpdate(){
-  console.log(this.state);
-}
+
 
 async componentWillMount(){
   console.log(this.state)
@@ -108,24 +112,22 @@ if (books!==null&&books!==undefined){
 
 
    if(Object.values(books)[i].category==='reading'){
-     ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.onMyBookClick}/>)
+     ReadingBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} isSize={3} cover={pic} onBookClick={this.onMyBookClick}/>)
 
    }else if(Object.values(books)[i].category==='to read'){
-     ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.onMyBookClick}/>)
+     ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} isSize={3} cover={pic} onBookClick={this.onMyBookClick}/>)
 
    }
  }
 }
  this.setState({
    ReadingBooks: ReadingBooks,
-   ToReadBooks: ToReadBooks
+   ToReadBooks: ToReadBooks,
  })
 })
 
 }//if user signed in
 }
-
-
 
 
 booksMouseOver = (e) =>{
@@ -166,27 +168,62 @@ notify = () => {
 }
 
 closeModal = () =>{
-  this.setState({isActive: false})
+  this.setState({isActive: false, activatedHashtags: '', hashstrings:''})
+  hashstrings=[]
 }
 
-onMyBookClick = (e) =>{
+ onMyBookClick(e){
     if(this.state.isActive!==true){
-
       let bookId = e.target.parentNode.getAttribute('id')
-      this.setState({isActive: !this.state.isActive, activatedBook: bookId})
+      this.setState({isActive: !this.state.isActive, activatedBook: bookId, activatedHashtags: this.findBookHashtags(bookId)})
+
+      let firebaseKey = this.findBookFirebaseIdByBookId(bookId)
+      let k = this.findBookComment(bookId)
+
     }
 }
 
+ findBookFirebaseIdByBookId = (bookId) => {
+  let booksLength = Object.values(this.state.userBooks).length
+  for (let i=0; i<booksLength; i++){
 
-/*loadBooks = () =>{
-  for (let i=1; i<17; i++){
-    ReadingBooks.push( <Book mouseOver={this.booksMouseOver} key={i} id={i} title={'title' + i} subtitle={'subtitle'+i} isSize={4} onBookClick={this.onMyBookClick} cover='' style={{backgroundColor:'blue'}}/> )
-   }
-
-   for (let n=0; n<3; n++){
-     ToReadBooks.push( <Book key={n} id={n} title={'title' + n} subtitle={'subtitle'+n} isSize={4} onBookClick={this.onMyBookClick} cover=''/> )
+    if (Object.values(this.state.userBooks)[i].id === bookId){
+      return Object.keys(this.state.userBooks)[i]
     }
-}*/
+  }
+}
+
+findBookComment = (bookId) =>{
+  let firebaseBookId = this.findBookFirebaseIdByBookId(bookId)
+  //console.log(this.state.userBooks[firebaseBookId]);
+  return this.state.userBooks[firebaseBookId].comment
+}
+
+findBookHashtags = (bookId) =>{
+  let firebaseBookId = this.findBookFirebaseIdByBookId(bookId)
+  if (this.state.userBooks[firebaseBookId].hashtags && this.state.userBooks[firebaseBookId].hashtags!='undefined'){
+  let tags = []
+  for (let i=0; i<this.state.userBooks[firebaseBookId].hashtags.length; i++){
+    tags.push(<Tag className="hashtags" style={{marginRight: '5px'}} key={i} isColor='info'>{this.state.userBooks[firebaseBookId].hashtags[i]}</Tag>)
+    hashstrings[i] = this.state.userBooks[firebaseBookId].hashtags[i]
+  }
+
+  return tags;
+} else{
+  return this.state.activatedHashtags
+}
+}
+
+
+saveChanges = () => {
+let fbId = this.findBookFirebaseIdByBookId(this.state.activatedBook)
+    const content = window.localStorage.getItem('content');
+    db.pushBookCommentAndHashtags(this.state.authUserId, fbId, content, hashstrings)
+    this.closeModal()
+    window.localStorage.removeItem('content');
+}
+
+
 
 
 deleteBook = () => {
@@ -214,14 +251,16 @@ onEnterTagClick = (event) =>{
   let code = event.keyCode || event.which;
     if(code === 13) { //13 is the enter keycode
 
-      let oldTags = this.state.activatedHashtags
-      let newTag = <Tag className="hashtags" style={{marginRight: '5px'}} key={this.state.activatedHashtags.length+1} isColor='info'>#{event.target.value}</Tag>
+        let oldTags = this.state.activatedHashtags
+         let newTag = <Tag className="hashtags" style={{marginRight: '5px'}} key={event.target.value} isColor='info'>#{event.target.value}</Tag>
 
-        this.setState({
-          activatedHashtags:[...oldTags, newTag]
-        })
+            this.setState({
+              activatedHashtags:[...oldTags, newTag]
+            })
 
-        event.target.value=''
+            hashstrings.push('#'+event.target.value)
+            event.target.value=''
+
     }
 }
 
@@ -253,24 +292,33 @@ let trackingTitle = (
   </Column>
 )
 
+let BookPopupActivated = (
+  <BookPopup
+    isActive={this.state.isActive!==false?'is-active':''}
+    closeModal={this.closeModal}
+    activatedBook={this.state.activatedBook}
+    title = {this.state.activatedTitle}
+    cover = {this.state.activatedCover}
+    author = {this.state.activatedAuthor}
+    page = "main"
+    deleteBook ={this.deleteBook}
+    saveChanges={this.saveChanges}
+    addTag={this.onEnterTagClick}
+    hashtags={this.state.activatedHashtags}
+    comment = {this.state.isActive!==false?this.findBookComment(this.state.activatedBook):'not active comment'}
+    uid = {this.state.authUserId}
+    bookId = {this.state.activatedBook}
+    />
+)
+
   return(
+
     <AuthUserContext.Consumer>
     {authUser =>
     <div className="App">
       <p>{authUser.uid}</p>
 
-      <BookPopup
-        isActive={this.state.isActive!==false?'is-active':''}
-        closeModal={this.closeModal}
-        activatedBook={this.state.activatedBook}
-        title = {this.state.activatedTitle}
-        cover = {this.state.activatedCover}
-        author = {this.state.activatedAuthor}
-        page = "main"
-        deleteBook ={this.deleteBook}
-        addTag={this.onEnterTagClick}
-        hashtags={this.state.activatedHashtags}
-        />
+      {this.state.isActive?BookPopupActivated:''}
 
       <div>
           <ToastContainer draggablePercent={60} autoClose={2500} />
@@ -322,7 +370,7 @@ const ReadingContainer = (props) => {
         <Box>
           <Subtitle isSize={3}>{props.title}</Subtitle>
           <div className="divider"/>
-          <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar">
+          <Columns isMobile isMultiline className="foundScrollableDesktop scrollBar is-variable is-3-tablet is-4-desktop is-5-widescreen">
           {props.ReadingBooks.length===0?'loading':props.ReadingBooks}
           </Columns>
         </Box>

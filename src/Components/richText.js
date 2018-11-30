@@ -1,5 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
+import {Editor, EditorState, RichUtils, convertToRaw, convertFromRaw} from 'draft-js';
 import 'draft-js/dist/Draft.css'
 import {Button} from 'bloomer'
 import {
@@ -7,12 +7,31 @@ import {
   isBrowser,
 
 } from "react-device-detect";
+import { db,auth } from '../firebase/index.js';
+
 
 export default class RichText extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {editorState: EditorState.createEmpty()};
+    this.state = {editorState: EditorState.createEmpty()}
   }
+
+componentDidMount(){
+
+  const content = this.props.comment;
+
+console.log(content);
+if (content!=='add your comment'&&content) {
+  this.setState({
+    editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
+  })
+} else {
+  this.setState({
+    editorState: EditorState.createEmpty()
+  })
+}
+}
+
 
   handleKeyCommand = (command) => {
     const newState = RichUtils.handleKeyCommand(this.state.editorState, command)
@@ -24,9 +43,17 @@ export default class RichText extends React.Component {
 }
 
 onChange = (editorState) => {
-   this.setState({
-     editorState
-   })
+  const contentState = editorState.getCurrentContent();
+  this.saveContent(contentState);
+  this.setState({
+    editorState,
+  });
+}
+
+ saveContent = (content) => {
+   window.localStorage.setItem('content', JSON.stringify(convertToRaw(content)));
+   console.log(window.localStorage.getItem('content'))
+
  }
 
  onUnderlineClick = () => {
@@ -97,9 +124,10 @@ onBlockHeaderlick = () => {
       editorState={this.state.editorState}
       onChange={this.onChange}
       handleKeyCommand={this.handleKeyCommand}
-      placeholder="Share thoughts, ideas, quotes and comments for the book.. "
+      placeholder={'write a comment here'}
       ref="editor"
       spellCheck={true}
+      value={'123'}
       />
       </div>
 

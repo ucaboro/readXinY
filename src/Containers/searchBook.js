@@ -73,8 +73,8 @@ class searchBook extends Component {
       authUserId: user.uid
     })
   }
-
 }
+
 
 
 
@@ -176,7 +176,7 @@ this.setState({
             let bookId = ''
 
             //push to db
-            //db.addBookToRead(this.state.authUserId,num, title, subtitle, pic)
+            db.addBookToRead(this.state.authUserId,num, title, subtitle, pic)
 
             //ToReadBooks.push(<Book key={num+title} id={num} title={title} subtitle={subtitle} size={3} cover={pic} onBookClick={this.props.onBookClick}/>)
 
@@ -360,6 +360,7 @@ findBooks = () => {
         subtitle = {this.state.activatedSubtitle}
         category = {this.state.activatedCategories}
 
+
         />
         <Columns isCentered isMultiline  >
           <Column className="mainHeading" isSize={12}>
@@ -513,7 +514,7 @@ const FoundContainerMobile = (props) => (
   </Columns>
 )
 
-const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick, deleteBook, addTag, hashtags}) =>(
+const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick, deleteBook, addTag, hashtags, comment, saveChanges, uid, bookId}) =>(
   <Columns isMultiline isMobile>
     <Column isSize={12} style={{textAlign: 'center'}}>
        <Field>
@@ -528,7 +529,7 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick, de
     <Column isSize={12} style={{textAlign: 'center'}}>
       <Field>
          <Label>Comments</Label>
-            <RichText/>
+            <RichText comment={comment} uid={uid} bookId={bookId}/>
      </Field>
     </Column>
 
@@ -539,7 +540,7 @@ const MediaPopupMain =({cover, title, author, isLoadingReading, readingClick, de
         </Column>
 
         <Column isSize={4}>
-          <Button isLoading={isLoadingReading} isColor='info' isSize='medium' onClick={readingClick}><b> SAVE</b></Button>
+          <Button isLoading={isLoadingReading} isColor='info' isSize='medium' onClick={saveChanges}><b> SAVE</b></Button>
         </Column>
 
         <Column isSize={4}>

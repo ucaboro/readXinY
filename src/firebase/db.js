@@ -54,6 +54,42 @@ export const addBookToRead = (uid,bookId, title, author, cover) =>{
 export const findBookById = (uid, bookId) =>
   db.ref('users').child(uid).child('books').orderByChild('id').equalTo(bookId);
 
+export const getBookComment = (uid, bookId) =>
+db.ref('users').child(uid).child('books').child(bookId).child('comment')[0].child('comment')
+
+export const pushBookCommentAndHashtags = (uid, bookId, comment, hashtags) =>
+{if (hashtags&&comment){
+
+  db.ref('users').child(uid).child('books').child(bookId).child('comment').set(
+    comment: comment,
+  )
+  db.ref('users').child(uid).child('books').child(bookId).child('hashtags').set(
+    hashtags: hashtags,
+  )
+}else if(comment){
+  db.ref('users').child(uid).child('books').child(bookId).child('comment').set(
+    comment: comment
+  )
+} else if(hashtags){
+  db.ref('users').child(uid).child('books').child(bookId).child('hashtags').set(
+    hashtags: hashtags,
+  )
+}
+}
+
+
+
+
+
+
+
+export const pushCommentAndHashtags = (uid, bookId, hastags, comment) =>{
+  db.ref('users').child(uid).child('books').child(bookId).push({
+    hastags: hastags,
+    comment: comment
+  })
+}
+
 export const deleteBookById = (uid, bookId) =>{
 let fbBookId =''
 findBookById(uid, bookId).on('value', snap =>{
