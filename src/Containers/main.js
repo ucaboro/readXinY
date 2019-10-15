@@ -163,7 +163,7 @@ notify = () => {
 }
 
 resetTracker = () => {
-  db.resetTracker(this.state.authUserId)
+  db.resetTracker(this.state.authUserId,this.state.trackingTitle)
   this.setState({trackingTitle: ''})
 }
 

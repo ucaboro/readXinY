@@ -5,6 +5,7 @@ import { db } from './firebase';
 export const doCreateUser = (id, email) =>
     db.ref(`users/${id}`).set({
         email,
+        trackers: { currentTracker: '', otherTrackers: '', },
     });
 
 export const onceGetUsers = () =>
@@ -17,13 +18,15 @@ export const getTrackers = (id) =>
     db.ref('users').child(id).child('trackers').child('currentTracker');
 
 export const setTracker = (uid, tracker) =>
-    db.ref('users').child(uid).child('trackers').set({
-        currentTracker: tracker,
+    db.ref('users').child(uid).child('trackers').update({
+        currentTracker: tracker
     });
 
-export const resetTracker = (uid) => {
-    db.ref('users').child(uid).child('trackers').child('otherTrackers').push(db.ref('users').child(uid).child('trackers').child('currentTracker'));
-    db.ref('users').child(uid).child('trackers').child('currentTracker').remove();
+export const resetTracker = (uid, tracker) => {
+    db.ref('users').child(uid).child('trackers').update({
+        otherTrackers: tracker,
+        currentTracker: ''
+    });
 };
 
 export const deleteCurrentTracker = (id) =>
