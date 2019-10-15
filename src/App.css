@@ -1,10 +1,11 @@
 .App {
-  text-align: center;
-  padding: 0 2% 0 2%;
+    text-align: center;
+    padding: 0 2% 0 2%;
 }
 
-body, html {
-  background-color:  #F5F5F5;
+body,
+html {
+    background-color: #F5F5F5;
 }
 
 .center {
@@ -13,202 +14,201 @@ body, html {
     padding: 10px;
 }
 
-.XandYinput{
-color: #363636;
-font-size: 2rem;
-font-weight: 600;
-line-height: 1.125;
-width: 50px;
+.XandYinput {
+    color: #363636;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.125;
+    width: 50px;
 }
 
-.book{
-  cursor: pointer;
+.book {
+    cursor: pointer;
 }
 
-.bookInfoBtn{
-  padding-right: 30px;
+.bookInfoBtn {
+    padding-right: 30px;
 }
 
 .mainHeading {
-  padding: 5%;
+    padding: 5%;
 }
 
 .title {
-  color: #686868;
+    color: #686868;
 }
 
 .subtitle {
-  color: #BEBEBE;
+    color: #BEBEBE;
 }
 
 input {
-  background-color: transparent !important;
-  outline: none !important;
-  border-width: 0 0 1px !important;
-  border-color: lightgrey !important;
-  box-shadow: none !important;
+    background-color: transparent !important;
+    outline: none !important;
+    border-width: 0 0 1px !important;
+    border-color: lightgrey !important;
+    box-shadow: none !important;
 }
 
-
-
 input:focus::-webkit-input-placeholder {
-  color: #3D98ED;
-  border-width: 0 0 0 !important;
+    color: #3D98ED;
+    border-width: 0 0 0 !important;
 }
 
 .input:focus+.underline {
-  box-shadow: none !important;
-  transform: scale(1);
+    box-shadow: none !important;
+    transform: scale(1);
 }
 
 .underline {
-  position: relative;
-  display: block;
-  background-color: #3D98ED;
-  height: 2px;
-  -webkit-transform: scale(0, 1);
-  transform: scale(0, 1);
-  -webkit-transition: all 0.5s linear;
-  transition: all 0.23s linear;
-  width: 100%;
+    position: relative;
+    display: block;
+    background-color: #3D98ED;
+    height: 2px;
+    -webkit-transform: scale(0, 1);
+    transform: scale(0, 1);
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.23s linear;
+    width: 100%;
 }
 
-.divider{
-  background-color: grey;
-  width: 100%;
-  height: 1px;
-  margin-bottom: 15px;
+.divider {
+    background-color: grey;
+    width: 100%;
+    height: 1px;
+    margin-bottom: 15px;
 }
 
-:root{
-  --placeholderHeight: 465px;
+:root {
+    --placeholderHeight: 465px;
 }
 
-.placeholder{
-  height: var(--placeholderHeight);
+.placeholder {
+    height: var(--placeholderHeight);
 }
 
-
-
-.foundScrollableMobile{
-  height: 200px;
-  overflow-y: auto;
+.foundScrollableMobile {
+    height: 200px;
+    overflow-y: auto;
 }
 
-.foundScrollableDesktop{
-  height: 800px;
-  overflow-x: auto;
+.foundScrollableDesktop {
+    height: 800px;
+    overflow-x: auto;
 }
 
-.trackerNotification{
-   -webkit-transition: width 1s linear .5s, height 1s linear .5s;
-   position: relative;
+.trackerNotification {
+    -webkit-transition: width 1s linear .5s, height 1s linear .5s;
+    position: relative;
 }
 
 .scrollBar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px
+    width: 5px;
+    height: 5px
 }
 
-
 .scrollBar::-webkit-scrollbar-thumb {
-  background: #BEBEBE;
-  border-radius: 10px;
+    background: #BEBEBE;
+    border-radius: 10px;
 }
 
 .scrollBar::-webkit-scrollbar-track {
-  background: #ddd;
-  border-radius: 10px;
+    background: #ddd;
+    border-radius: 10px;
 }
 
-
-
-.customButton{
-  width: 100%;
-  height: 77px;
+.customButton {
+    width: 100%;
+    height: 77px;
 }
 
-.searchBooksInput{
-  width: 350px;
+.searchBooksInput {
+    width: 350px;
 }
-
 
 .customBlockquote {
-  background: #f9f9f9;
-  border-left: 10px solid #ccc;
-  margin: 1.5em 10px;
-  padding: 0.5em 10px;
-  quotes: "\201C""\201D""\2018""\2019";
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
 }
+
 .customBlockquote:before {
-  color: #ccc;
-  content: open-quote;
-  font-size: 4em;
-  line-height: 0.1em;
-  margin-right: 0.25em;
-  vertical-align: -0.4em;
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
 }
+
 .customBlockquote p {
-  display: inline;
+    display: inline;
 }
 
-.customCode{
-background-color: rgba(0, 0, 0, 0.05);
-padding: 2;
-font-family: 'Inconsolata', "Menlo", "Consolas", monospace;
-font-size: 16;
+.customCode {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2;
+    font-family: 'Inconsolata', "Menlo", "Consolas", monospace;
+    font-size: 16;
 }
 
-.deleteTag{
-  cursor: pointer;
+.resetTag {
+    cursor: pointer;
 }
 
-.shareUrl{
-  -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+.deleteTag {
+    cursor: pointer;
 }
 
-.editors{
-  padding: 10px;
-padding-left: 25px;
-padding-right: 25px;
-margin-bottom: 50px;
-}
-.editorContainer{
-padding-top: 15px;
-border: 1px;
-border-style: solid;
-border-color: lightgrey;
-border-radius: 25px;
+.shareUrl {
+    -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
-.customHeader{
-  font-weight: bold;
-  font-size: 30px;
+.editors {
+    padding: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-bottom: 50px;
 }
 
-.hashtags{
-  opacity: 0;
-  animation-name: bounceIn;
-  animation-duration: 250ms;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
+.editorContainer {
+    padding-top: 15px;
+    border: 1px;
+    border-style: solid;
+    border-color: lightgrey;
+    border-radius: 25px;
 }
 
-@keyframes bounceIn{
-  0%{
+.customHeader {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.hashtags {
     opacity: 0;
-    transform: scale(0.3) translate3d(0,0,0);
-  }
-  50%{
-    opacity: 0.9;
-    transform: scale(1.1);
-  }
-  80%{
-    opacity: 1;
-    transform: scale(0.89);
-  }
-  100%{
-    opacity: 1;
-    transform: scale(1) translate3d(0,0,0);
-  }
+    animation-name: bounceIn;
+    animation-duration: 250ms;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translate3d(0, 0, 0);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: scale(0.89);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translate3d(0, 0, 0);
+    }
 }

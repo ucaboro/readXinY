@@ -162,7 +162,12 @@ notify = () => {
   }
 }
 
- deleteTracker = () => {
+resetTracker = () => {
+  db.resetTracker(this.state.authUserId)
+  this.setState({trackingTitle: ''})
+}
+
+deleteTracker = () => {
  db.deleteCurrentTracker(this.state.authUserId)
  this.setState({trackingTitle: ''})
 }
@@ -287,7 +292,7 @@ let trackingTitle = (
   <Column className="mainHeading" isSize={12}>
   <Title>
     {this.state.trackingTitle.toString()}
-    <Tag className="deleteTag"isColor='danger'onClick={this.deleteTracker}>reset</Tag>
+    <Tag className="resetTag"isColor='danger'onClick={this.resetTracker}>reset</Tag>
   </Title>
   </Column>
 )
